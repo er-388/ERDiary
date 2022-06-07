@@ -51,6 +51,57 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
             Console.WriteLine();
         }
+
+        public static void PrintAllIdsAndTopics()
+        {
+            Console.Clear();
+            Console.WriteLine("Kaikki aiheet (id ja aihe):");
+            foreach (var topic in topics)
+            {
+                Console.WriteLine(topic.Id + ") " + topic.Title);
+            }
+            Console.WriteLine();
+        }
+
+        public static void PrintAllProperties(int indexOfTopicToPrint)
+        {
+            Console.Clear();
+            Console.WriteLine("Kaikki aiheen \"{0}\" tiedot:" +
+                "\nId:" + topics[indexOfTopicToPrint].Id +
+                "\nKuvaus: " + topics[indexOfTopicToPrint].Description +
+                "\nAika-arvio, milloin taito hallittu: " + topics[indexOfTopicToPrint].EstimatedTimeToMaster +
+                "\njne. jne.");
+            Console.WriteLine();
+        }
+
+        public static void ChoosePropertyToSet(int indexOfChosenTopic)
+        {
+            Console.WriteLine("Kirjoita numero, minkä tiedon haluat asettaa: " +
+                "\n1) Otsikko" +
+                "\n2) Kuvaus");
+            int propertyToSet = Convert.ToInt32(Console.ReadLine());
+            Topic.SetProperty(indexOfChosenTopic, propertyToSet);
+
+        }
+        public static void SetProperty(int indexOfChosenTopic, int propertyToSet)
+        {
+            switch (propertyToSet)
+            {
+                case 1:
+                    Console.Write("Syötä aiheelle uusi aihe: ");
+                    topics[indexOfChosenTopic].Title = Console.ReadLine();
+                    break;
+
+                case 2:
+                    Console.Write("Syötä aiheen kuvaus: ");
+                    topics[indexOfChosenTopic].Description = Console.ReadLine();
+                    break;
+                default:
+                    Console.WriteLine("Vain otsikkoa (=1) ja kuvausta (=2) voi toistaiseksi muuttaa!");//Muut ominaisuudet kesken!
+                    break;
+            }
+            
+        }
         
     }
 
