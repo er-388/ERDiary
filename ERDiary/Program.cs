@@ -1,5 +1,5 @@
 ﻿using System;
-// Tämä on testiversio branch
+
 namespace ERDiary
 {
     class Program
