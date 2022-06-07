@@ -9,7 +9,7 @@ namespace ERDiary
             bool showMenu = true;
             while (showMenu)
             {
-                showMenu = MainMenu();
+                showMenu = MainMenu();//ShowMenu() palauttaa false, jos käyttäjä haluaa lopettaa.
             }
         }
         static bool MainMenu()
@@ -22,7 +22,7 @@ namespace ERDiary
                 
             if (String.IsNullOrWhiteSpace(input))
             {
-                return false;
+                return false;//lopettaa MainMenun (ja ohjelman) suorituksen
             }
 
             else if (input == "1")
