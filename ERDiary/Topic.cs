@@ -30,18 +30,11 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         //private static int counter = 1;
         public Topic(string title)
         {
-            //Id = counter;
-            //counter++;
             Title = title;
-            Id = topics.Count + 1;
+            Id = topics.Count + 1;//ID määritetty ennen listalle lisäämistä, joten topics.Count + 1
             topics.Add(this);
             Console.WriteLine("Lisäsit aiheen " + Title + ", jonka id on "+Id+" \n");
         }
-
-        //public static void AddNewTopic(string title)
-        //{
-        //    topics.Add(new Topic(title));
-        //}
 
         public static void PrintAllTopics()
         {
