@@ -37,8 +37,6 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             Console.WriteLine("Lisäsit aiheen " + Title + ", jonka id on "+Id+" \n");
             File.AppendAllText(path, title + Environment.NewLine);
 
-<<<<<<< HEAD
-=======
             if (File.Exists(path))//testataan tiedosto
             {
                 string[] testing;
@@ -51,7 +49,6 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
         }
 
->>>>>>> feature
         public static void PrintAllTopics()
         {
             Console.Clear();
@@ -84,20 +81,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             Console.WriteLine();
         }
 
-<<<<<<< HEAD
-        public static void PrintAllIdsAndTopics()
-        {
-            Console.Clear();
-            Console.WriteLine("Kaikki aiheet (id ja aihe):");
-            foreach (var topic in topics)
-            {
-                Console.WriteLine(topic.Id + ") " + topic.Title);
-            }
-            Console.WriteLine();
-        }
 
-=======
->>>>>>> feature
         public static void PrintAllProperties(int indexOfTopicToPrint)
         {
             Console.Clear();
@@ -105,23 +89,16 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 "\nId:" + topics[indexOfTopicToPrint].Id +
                 "\nKuvaus: " + topics[indexOfTopicToPrint].Description +
                 "\nAika-arvio, milloin taito hallittu: " + topics[indexOfTopicToPrint].EstimatedTimeToMaster +
-<<<<<<< HEAD
-                "\njne. jne.");
-=======
+                "\njne. jne." +
                 "\njne. jne.", topics[indexOfTopicToPrint].Title);
->>>>>>> feature
             Console.WriteLine();
         }
 
         public static void ChoosePropertyToSet(int indexOfChosenTopic)
         {
-            Console.WriteLine("Kirjoita numero, minkä tiedon haluat asettaa: " +
-                "\n1) Otsikko" +
-                "\n2) Kuvaus");
-<<<<<<< HEAD
-            int propertyToSet = Convert.ToInt32(Console.ReadLine());
-            Topic.SetProperty(indexOfChosenTopic, propertyToSet);
-=======
+        Console.WriteLine("Kirjoita numero, minkä tiedon haluat asettaa: " +
+            "\n1) Otsikko" +
+            "\n2) Kuvaus");
             if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
             {
                 propertyToSet--; //vähennetään 1 jotta saadaan suoraan listan topics indeksi
@@ -131,7 +108,6 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             {
                 Console.WriteLine("Syötä numero.");
             }
->>>>>>> feature
 
         }
         public static void SetProperty(int indexOfChosenTopic, int propertyToSet)
@@ -151,15 +127,12 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     Console.WriteLine("Vain otsikkoa (=1) ja kuvausta (=2) voi toistaiseksi muuttaa!");//Muut ominaisuudet kesken!
                     break;
             }
-<<<<<<< HEAD
             
-        }
         
-=======
+
 
         }
 
->>>>>>> feature
     }
 
 }

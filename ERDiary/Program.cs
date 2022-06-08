@@ -62,7 +62,8 @@ namespace ERDiary
                 else
                 {
                     Console.WriteLine("Syötä numero.");
-                
+
+                }
             }
 
             else if (input == 4)//Tulostaa kaikki valittavan aiheen tiedot
@@ -70,7 +71,8 @@ namespace ERDiary
                 Console.WriteLine("Kirjoita sen aiheen numero, jonka kaikki tiedot haluat nähdä." +
                     "\nAiheet:");
                 Topic.PrintAllIdsAndTopics();
-                if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true) {
+                if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true)
+                {
                     topicToPrint--; //vähennetään 1 jotta saadaan suoraan listan topics indeksi
                     Topic.PrintAllProperties(topicToPrint);
                 }
