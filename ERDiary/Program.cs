@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-//MAIN BRANCH
 
 namespace ERDiary
 {
