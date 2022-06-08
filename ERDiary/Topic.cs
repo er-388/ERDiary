@@ -55,7 +55,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 string[] topicsToPrint = File.ReadAllLines(path);
                 if (topicsToPrint.Length == 0)
                 {
-                    Console.WriteLine("Tiedosto on tyhjä!);
+                    Console.WriteLine("Tiedosto on tyhjä!");
                 }
                 else
                 {
@@ -68,7 +68,64 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             
             Console.WriteLine();
         }
-        
+        public static void PrintAllIdsAndTopics()
+        {
+            Console.Clear();
+            Console.WriteLine("Kaikki aiheet (id ja aihe):");
+            foreach (var topic in topics)
+            {
+                Console.WriteLine(topic.Id + ") " + topic.Title);
+            }
+            Console.WriteLine();
+        }
+
+        public static void PrintAllProperties(int indexOfTopicToPrint)
+        {
+            Console.Clear();
+            Console.WriteLine("Kaikki aiheen \"{0}\" tiedot:" +
+                "\nId:" + topics[indexOfTopicToPrint].Id +
+                "\nKuvaus: " + topics[indexOfTopicToPrint].Description +
+                "\nAika-arvio, milloin taito hallittu: " + topics[indexOfTopicToPrint].EstimatedTimeToMaster +
+                "\njne. jne.", topics[indexOfTopicToPrint].Title);
+            Console.WriteLine();
+        }
+
+        public static void ChoosePropertyToSet(int indexOfChosenTopic)
+        {
+            Console.WriteLine("Kirjoita numero, minkä tiedon haluat asettaa: " +
+                "\n1) Otsikko" +
+                "\n2) Kuvaus");
+            if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
+            {
+                propertyToSet--; //vähennetään 1 jotta saadaan suoraan listan topics indeksi
+                Topic.SetProperty(indexOfChosenTopic, propertyToSet);
+            }
+            else
+            {
+                Console.WriteLine("Syötä numero.");
+            }
+
+        }
+        public static void SetProperty(int indexOfChosenTopic, int propertyToSet)
+        {
+            switch (propertyToSet)
+            {
+                case 1:
+                    Console.Write("Syötä aiheelle uusi aihe: ");
+                    topics[indexOfChosenTopic].Title = Console.ReadLine();
+                    break;
+
+                case 2:
+                    Console.Write("Syötä aiheen kuvaus: ");
+                    topics[indexOfChosenTopic].Description = Console.ReadLine();
+                    break;
+                default:
+                    Console.WriteLine("Vain otsikkoa (=1) ja kuvausta (=2) voi toistaiseksi muuttaa!");//Muut ominaisuudet kesken!
+                    break;
+            }
+
+        }
+
     }
 
 }
