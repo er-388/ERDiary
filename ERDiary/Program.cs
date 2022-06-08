@@ -1,5 +1,5 @@
 ﻿using System;
-// Tämä on testiversio branch
+// Tämä on FEATURE branch
 namespace ERDiary
 {
     class Program
