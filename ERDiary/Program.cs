@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace ERDiary
 {
@@ -11,6 +12,7 @@ namespace ERDiary
             {
                 showMenu = MainMenu();//ShowMenu() palauttaa false, jos käyttäjä haluaa lopettaa.
             }
+            
         }
         static bool MainMenu()
         {
@@ -61,7 +63,7 @@ namespace ERDiary
                 Console.Clear();
                 Console.WriteLine("Kokeile uudestaan.");
             }
-            return true;
+            return true;//jos syöte muuta kuin ENTER, MainMenu() toistoa jatketaan.
             
         }
 
