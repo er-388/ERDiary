@@ -1,7 +1,6 @@
-﻿//FEATURE
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ERDiary
 {
@@ -26,24 +25,47 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         private DateTime StartLearningDate { get; set; }
         private bool InProgress { get; set; }
         private DateTime CompletionDate { get; set; }
-        public static List<Topic> topics = new List<Topic>();
-        //private static int counter = 1;
+        private static List<Topic> topics = new List<Topic>();
+        private static string path = @"C:\Users\Erkki\source\repos\ERDiary\data.txt";
         public Topic(string title)
         {
             Title = title;
             Id = topics.Count + 1;//ID määritetty ennen listalle lisäämistä, joten topics.Count + 1
             topics.Add(this);
             Console.WriteLine("Lisäsit aiheen " + Title + ", jonka id on "+Id+" \n");
+            File.AppendAllText(path, title + Environment.NewLine);
+
+            if (File.Exists(path))//testataan tiedosto
+            {
+                string[] testing;
+                testing = File.ReadAllLines(path);
+                foreach (string topic in testing)
+                {
+                    Console.WriteLine("Tiedostosta tulostettu: " + topic);
+                }
+                Console.WriteLine();
+            }
         }
 
         public static void PrintAllTopics()
         {
             Console.Clear();
-            Console.WriteLine("Kaikki syötetyt aiheet:");
-            foreach (var topic in topics)
+            if (File.Exists(path))
             {
-                Console.WriteLine(topic.Title);
+                string[] topicsToPrint = File.ReadAllLines(path);
+                if (topicsToPrint.Length == 0)
+                {
+                    Console.WriteLine("Tiedosto on tyhjä!);
+                }
+                else
+                {
+                    foreach (string topic in topicsToPrint)
+                    {
+                        Console.WriteLine(topic);
+                    }
+                }
             }
+            
             Console.WriteLine();
         }
         

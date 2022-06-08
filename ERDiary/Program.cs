@@ -1,11 +1,15 @@
 ﻿using System;
-// Tämä on FEATURE branch
+using System.IO;
+
 namespace ERDiary
 {
     class Program
     {
         static void Main(string[] args)
         {
+            string pathToClear = @"C:\Users\Erkki\source\repos\ERDiary\data.txt";//tyhjentää tiedoston ajon aluksi
+            File.Create(pathToClear).Close();//tyhjentää tiedoston ajon 
+
             bool showMenu = true;
             while (showMenu)
             {
@@ -25,15 +29,16 @@ namespace ERDiary
                 return false;//lopettaa MainMenun (ja ohjelman) suorituksen
             }
 
-            else if (input == "1")
+            else if (input == "1")//lisää aiheen tiedostoon ja listaan topics
             {
                 Console.Write("Syötä aihe: ");
                 string title = Console.ReadLine();
-                Topic t = new Topic(title)
+                Topic t = new Topic(title);
             }
 
             else if (input == "2")
-            { 
+            {
+                Console.WriteLine("Kaikki syötetyt aiheet:");
                 Topic.PrintAllTopics(); 
             }
                 
