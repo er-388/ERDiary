@@ -28,16 +28,26 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         private bool InProgress { get; set; }
         private DateTime CompletionDate { get; set; }
         private static List<Topic> topics = new List<Topic>();
-        private static string path = @"C:\Users\Erkki\source\repos\ERDiary\data.txt";
+        private static string path = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
+        private static int idCounter = 1;//muuttuja ID:n määrittämiseksi; ensimmäinen aihe saa ID:n 1.
+        
         public Topic(string title)
         {
-            Title = title;
-            Id = topics.Count + 1;//ID määritetty ennen listalle lisäämistä, joten topics.Count + 1
-            topics.Add(this);
-            Console.WriteLine("Lisäsit aiheen " + Title + ", jonka id on "+Id+" \n");
-            File.AppendAllText(path, title + Environment.NewLine);
 
-            if (File.Exists(path))//testataan tiedosto
+            foreach (string line in File.ReadLines(path)) { idCounter++; }
+            Title = title;
+            //Id = topics.Count + 1;//ID määritetty ennen kuin Topic lisätään listalle >> topics.Count + 1
+            Id = idCounter;
+            topics.Add(this);//lisätään listalle topics
+            Console.WriteLine("Lisäsit aiheen " + Title + ", jonka id on "+Id+" \n");
+
+            //luodaan string array, yhdistetään string arrayn osat merkkijonoksi erotettuna pilkulla ja lisätään se csv-tiedostoon
+            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title };
+            string stringToAppend = String.Join(",", stringsToAppend);
+            File.AppendAllText(path, stringToAppend + Environment.NewLine);
+            
+            //testataan, että tallentunut tiedostoon
+            if (File.Exists(path))
             {
                 string[] testing;
                 testing = File.ReadAllLines(path);
@@ -52,23 +62,27 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         public static void PrintAllTopics()
         {
             Console.Clear();
-            if (File.Exists(path))
+            try 
             {
                 string[] topicsToPrint = File.ReadAllLines(path);
                 if (topicsToPrint.Length == 0)
                 {
-                    Console.WriteLine("Tiedosto on tyhjä!");
+                    Console.WriteLine("Et ole lisännyt yhtään aihetta.");
                 }
                 else
                 {
                     foreach (string topic in topicsToPrint)
                     {
-                        Console.WriteLine(topic);
+                        Console.WriteLine(topic);//Tulostaa nyt csv-tiedoston rivit, mukaan lukien indeksit ja pilkut
                     }
                 }
             }
-            
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Et ole vielä lisännyt yhtään aihetta!");
+            }
             Console.WriteLine();
+
         }
         public static void PrintAllIdsAndTopics()
         {
@@ -80,7 +94,6 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
             Console.WriteLine();
         }
-
 
         public static void PrintAllProperties(int indexOfTopicToPrint)
         {
@@ -96,40 +109,56 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
         public static void ChoosePropertyToSet(int indexOfChosenTopic)
         {
+        //tähän pitäisi lisätä tarkitus, onko metodin parametri ok!
         Console.WriteLine("Kirjoita numero, minkä tiedon haluat asettaa: " +
             "\n1) Otsikko" +
             "\n2) Kuvaus");
             if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
             {
-                propertyToSet--; //vähennetään 1 jotta saadaan suoraan listan topics indeksi
                 Topic.SetProperty(indexOfChosenTopic, propertyToSet);
             }
             else
             {
                 Console.WriteLine("Syötä numero.");
             }
-
         }
-        public static void SetProperty(int indexOfChosenTopic, int propertyToSet)
+
+        public static void SetProperty(int idOfChosenTopic, int propertyToSet)
         {
             switch (propertyToSet)
             {
                 case 1:
                     Console.Write("Syötä aiheelle uusi aihe: ");
-                    topics[indexOfChosenTopic].Title = Console.ReadLine();
+                    //vaihtaa aiheen listaan
+                    string newTopic = Console.ReadLine();
+                    topics[idOfChosenTopic-1].Title = newTopic;
+                    //vaihtaa aiheen csv-tiedostoon: käydään tiedoston rivit läpi
+                    List<String> newLines = new List<String>();
+                    foreach (string line in File.ReadLines(path)) 
+                    {
+                        string[] singleLine = line.Split(',');
+                        if (idOfChosenTopic.ToString() == singleLine[0])//lines[0] = In
+                        {
+                            singleLine[1] = newTopic;//lines[1] = Title
+                        }
+                        newLines.Add(String.Join(',', singleLine));
+                    }
+                    File.Create(path).Close();
+                    foreach (string line in newLines)
+                    {
+                        File.AppendAllText(path, line + Environment.NewLine);
+                    }
                     break;
 
                 case 2:
                     Console.Write("Syötä aiheen kuvaus: ");
-                    topics[indexOfChosenTopic].Description = Console.ReadLine();
+                    topics[idOfChosenTopic].Description = Console.ReadLine();
                     break;
+
                 default:
                     Console.WriteLine("Vain otsikkoa (=1) ja kuvausta (=2) voi toistaiseksi muuttaa!");//Muut ominaisuudet kesken!
                     break;
             }
-            
-        
-
 
         }
 

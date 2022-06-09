@@ -7,8 +7,9 @@ namespace ERDiary
     {
         static void Main(string[] args)
         {
-            string pathToClear = @"C:\Users\Erkki\source\repos\ERDiary\data.txt";//tyhjentää tiedoston ajon aluksi
-            File.Create(pathToClear).Close();//tyhjentää tiedoston ajon 
+            //tyhjentää tiedoston ajon aluksi (testailua varten)
+            //string pathToClear = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
+            //File.Create(pathToClear).Close();
 
             bool showMenu = true;
             while (showMenu)
@@ -17,12 +18,13 @@ namespace ERDiary
             }
             
         }
+
         static bool MainMenu()
         {
             Console.Write("Kirjoita:" +
                 "\n1) Syöttääksesi uusi aihe" +
                 "\n2) Tulostaaksesi kaikki aiheet " +
-                "\n3) Muokkaa aiheen tietoja (KESKEN!)" +
+                "\n3) Muokkaa aiheen tietoja (TOIMII OSITTAIN!)" +
                 "\n4) Näytä yhden aiheen kaikki tiedot (KESKEN!)" +
                 "\ntai paina ENTER lopettaaksesi. ");
             string stringInput = Console.ReadLine();
@@ -50,14 +52,15 @@ namespace ERDiary
                 Topic.PrintAllTopics();
             }
 
-            else if (input == 3)//Tulostaa listan kaikista aiheista; käyttäjä valitsee yhden aiheen jonka tietoja muokkaa
+            else if (input == 3)
             {
+                //Tulostaa listan kaikista aiheista. Kysytään käyttäjältä mitä aihetta haluaa muokata.
                 Topic.PrintAllIdsAndTopics();
-                Console.Write("Kirjoita sen aiheen numero, jonka tietoja haluat lisätä: ");
-                if (Int32.TryParse(Console.ReadLine(), out int topicToEdit) == true)
+                Console.Write("Kirjoita sen aiheen numero, jonka tietoja haluat lisätä tai muokata: ");
+                //jos syöte on numero, siirrytään metodiin, josta valitaan mitä valitun aiheen ominaisuutta halutaan muokata.
+                if (Int32.TryParse(Console.ReadLine(), out int idOfTopicToEdit) == true)
                 {
-                    topicToEdit--; //vähennetään 1 jotta saadaan suoraan listan topics indeksi
-                    Topic.ChoosePropertyToSet(topicToEdit);
+                    Topic.ChoosePropertyToSet(idOfTopicToEdit);
                 }
                 else
                 {
