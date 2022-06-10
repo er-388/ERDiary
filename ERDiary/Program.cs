@@ -10,6 +10,8 @@ namespace ERDiary
             //tyhjentää tiedoston ajon aluksi (testailua varten)
             //string pathToClear = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
             //File.Create(pathToClear).Close();
+
+            //AddLinesFromCSVTo();//kesken
             Console.ForegroundColor = ConsoleColor.DarkGray;
 
             Console.WriteLine(@"  _   _   _ ___      ___  __  _ o  o ___    o  o    ___  _           
@@ -71,7 +73,7 @@ namespace ERDiary
             else if (input == 3)
             {
                 //Tulostaa listan kaikista aiheista. Kysytään käyttäjältä mitä aihetta haluaa muokata.
-                Topic.PrintAllIdsAndTopics();
+                Topic.PrintAllTopics();
                 Console.Write("Kirjoita sen aiheen numero, jonka tietoja haluat lisätä tai muokata: ");
                 //jos syöte on numero, siirrytään metodiin, josta valitaan mitä valitun aiheen ominaisuutta halutaan muokata.
                 if (Int32.TryParse(Console.ReadLine(), out int idOfTopicToEdit) == true)
@@ -88,7 +90,7 @@ namespace ERDiary
             {
                 Console.WriteLine("Kirjoita sen aiheen numero, jonka kaikki tiedot haluat nähdä." +
                     "\nAiheet:");
-                Topic.PrintAllIdsAndTopics();
+                Topic.PrintAllTopics();
                 if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true)
                 {
                     topicToPrint--; //vähennetään 1 jotta saadaan suoraan listan topics indeksi
