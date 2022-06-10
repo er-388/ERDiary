@@ -1,6 +1,4 @@
-﻿//FEATURE
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -30,19 +28,36 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         private static List<Topic> topics = new List<Topic>();
         private static string path = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
         private static int idCounter = 1;//muuttuja ID:n määrittämiseksi; ensimmäinen aihe saa ID:n 1.
-        
+        private static bool increaseCounterValueFromCSV = true;//Katsoo CSV-tiedostosta aiheiden määrän VAIN ohjelman suorituksen alussa >> kun lista luetaan konstruktorissa ensimmäisen kerran, saa arvon false.
+
         public Topic(string title)
         {
-
-            foreach (string line in File.ReadLines(path)) { idCounter++; }
+            Console.Clear();
+            
+            //kun ohjelman käynnistyksen jälkeen luodaan ensimmäinen topic, while-loopissa katsotaan CSV-tiedostosta rivien määrä ja määritetään idCounter-muuttujalle oikea arvo. 
+            while (increaseCounterValueFromCSV)
+            {
+                try
+                {
+                    foreach (string line in File.ReadLines(path)) { idCounter++; }
+                    increaseCounterValueFromCSV = false;
+                }
+                catch { }
+            }
             Title = title;
             //Id = topics.Count + 1;//ID määritetty ennen kuin Topic lisätään listalle >> topics.Count + 1
             Id = idCounter;
-            topics.Add(this);//lisätään listalle topics
-            Console.WriteLine("Lisäsit aiheen " + Title + ", jonka id on "+Id+" \n");
+            idCounter++;
+
+            //StartLearningDaten määritys
+            StartLearningDate = DateTime.Now;
+
+            //lisätään listalle topics
+            topics.Add(this);
+            Console.WriteLine("\nLisäsit klo " + StartLearningDate + " aiheen " + Title + ", jonka id on "+Id+".\n");
 
             //luodaan string array, yhdistetään string arrayn osat merkkijonoksi erotettuna pilkulla ja lisätään se csv-tiedostoon
-            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title };
+            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title, this.StartLearningDate.ToString()};
             string stringToAppend = String.Join(",", stringsToAppend);
             File.AppendAllText(path, stringToAppend + Environment.NewLine);
             
@@ -55,28 +70,38 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 {
                     Console.WriteLine("Tiedostosta tulostettu: " + topic);
                 }
-                Console.WriteLine();
             }
         }
 
+        //tulostaa kaikki aiheet, niiden ID:t ja aloitusajat (=lisäysaika)
         public static void PrintAllTopics()
         {
             Console.Clear();
+            //yritetään lukea tiedosto
             try 
             {
                 string[] topicsToPrint = File.ReadAllLines(path);
                 if (topicsToPrint.Length == 0)
                 {
-                    Console.WriteLine("Et ole lisännyt yhtään aihetta.");
+                    Console.WriteLine("Et ole lisännyt yhtään aihetta.");//jos tiedosto löytyy mutta on tyhjä
                 }
+                
+                //jos tiedosto ei ole tyhjä, foreach-loopissa jokaisesta rivin sisällöstä tehdään string[] ja tulostetaan sisältö
                 else
                 {
                     foreach (string topic in topicsToPrint)
                     {
-                        Console.WriteLine(topic);//Tulostaa nyt csv-tiedoston rivit, mukaan lukien indeksit ja pilkut
+                        string[] line = topic.Split(',');
+                        Console.WriteLine("Aihe: " + line[1] +
+                            " (tunniste: " + line[0] +
+                            "\nAloitusaika: " + line[2]);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                        Console.ResetColor();
                     }
                 }
             }
+            //jos tiedostoa ei ole olemassa, käyttäjä ei ole lisännyt yhtään aihetta
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Et ole vielä lisännyt yhtään aihetta!");

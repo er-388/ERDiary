@@ -10,23 +10,39 @@ namespace ERDiary
             //tyhjentää tiedoston ajon aluksi (testailua varten)
             //string pathToClear = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
             //File.Create(pathToClear).Close();
+            Console.ForegroundColor = ConsoleColor.DarkGray;
 
+            Console.WriteLine(@"  _   _   _ ___      ___  __  _ o  o ___    o  o    ___  _           
+ / \ |_) |_) |  |\/|  |  (_  |_) /\   | \  / /\  |/  |  |_)   |  /\  
+ \_/ |   |  _|_ |  | _|_ __) |  /--\ _|_ \/ /--\ |\ _|_ | \ \_| /--\");
+
+            Console.WriteLine();
+            Console.ResetColor();
+
+            //ShowMenu() palauttaa false, jos käyttäjä haluaa lopettaa eli painaa valikossa ENTER.
             bool showMenu = true;
             while (showMenu)
             {
-                showMenu = MainMenu();//ShowMenu() palauttaa false, jos käyttäjä haluaa lopettaa.
+                showMenu = MainMenu();
             }
-            
         }
 
         static bool MainMenu()
         {
-            Console.Write("Kirjoita:" +
-                "\n1) Syöttääksesi uusi aihe" +
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(@"
+    ~~~~~~~~~~~~~
+       VALIKKO
+    ~~~~~~~~~~~~~");
+            Console.ResetColor();
+            Console.Write("\n1) Syöttääksesi uusi aihe" +
                 "\n2) Tulostaaksesi kaikki aiheet " +
                 "\n3) Muokkaa aiheen tietoja (TOIMII OSITTAIN!)" +
                 "\n4) Näytä yhden aiheen kaikki tiedot (KESKEN!)" +
-                "\ntai paina ENTER lopettaaksesi. ");
+                "\ntai paina ENTER lopettaaksesi.\n");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write("Valitse toiminto:  ");
+            Console.ResetColor();
             string stringInput = Console.ReadLine();
 
             if (String.IsNullOrWhiteSpace(stringInput))
@@ -65,7 +81,6 @@ namespace ERDiary
                 else
                 {
                     Console.WriteLine("Syötä numero.");
-
                 }
             }
 
@@ -91,7 +106,6 @@ namespace ERDiary
                 Console.WriteLine("Kokeile uudestaan.");
             }
             return true;//jos syöte muuta kuin ENTER, MainMenu() toistoa jatketaan.
-            
         }
 
 
