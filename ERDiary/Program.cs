@@ -11,7 +11,6 @@ namespace ERDiary
             //string pathToClear = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
             //File.Create(pathToClear).Close();
 
-            //AddLinesFromCSVTo();//kesken
             Console.ForegroundColor = ConsoleColor.DarkGray;
 
             Console.WriteLine(@"  _   _   _ ___      ___  __  _ o  o ___    o  o    ___  _           
@@ -39,8 +38,8 @@ namespace ERDiary
             Console.ResetColor();
             Console.Write("\n1) Syöttääksesi uusi aihe" +
                 "\n2) Tulostaaksesi kaikki aiheet " +
-                "\n3) Muokkaa aiheen tietoja (TOIMII OSITTAIN!)" +
-                "\n4) Näytä yhden aiheen kaikki tiedot (KESKEN!)" +
+                "\n3) Muokkaa aihetta tai sen kuvausta" +
+                "\n4) Näytä yhden aiheen kaikki tiedot" +
                 "\ntai paina ENTER lopettaaksesi.\n");
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.Write("Valitse toiminto:  ");
@@ -72,9 +71,11 @@ namespace ERDiary
 
             else if (input == 3)
             {
+                //ohjelma kaatuu, jos CSV-tiedostoa ei ole ja käyttäjä jatkaa tiedon muokkaamiseen
                 //Tulostaa listan kaikista aiheista. Kysytään käyttäjältä mitä aihetta haluaa muokata.
                 Topic.PrintAllTopics();
-                Console.Write("Kirjoita sen aiheen numero, jonka tietoja haluat lisätä tai muokata: ");
+                Console.WriteLine("Minkä aiheen tietoja haluat muokata?\n");
+                Topic.AskForId("tunniste");
                 //jos syöte on numero, siirrytään metodiin, josta valitaan mitä valitun aiheen ominaisuutta halutaan muokata.
                 if (Int32.TryParse(Console.ReadLine(), out int idOfTopicToEdit) == true)
                 {
@@ -88,12 +89,16 @@ namespace ERDiary
 
             else if (input == 4)//Tulostaa kaikki valittavan aiheen tiedot
             {
-                Console.WriteLine("Kirjoita sen aiheen numero, jonka kaikki tiedot haluat nähdä." +
-                    "\nAiheet:");
+                //ohjelma kaatuu, jos CSV-tiedostoa ei ole   
                 Topic.PrintAllTopics();
+                Console.WriteLine("Minkä aiheen kaikki tiedot haluat nähdä?");
+                Topic.AskForId("tunniste");
                 if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true)
                 {
-                    topicToPrint--; //vähennetään 1 jotta saadaan suoraan listan topics indeksi
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("\nAiheen {0} kaikki tiedot", topicToPrint);
+                    Console.ResetColor();
                     Topic.PrintAllProperties(topicToPrint);
                 }
                 else

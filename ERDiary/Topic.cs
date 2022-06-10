@@ -27,7 +27,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         private DateTime CompletionDate { get; set; }
         
         private static string path = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
-        private static List<Topic> topics = new List<Topic>();
+        //private static List<Topic> topics = new List<Topic>();
 
         private static int idCounter = 1;//muuttuja ID:n määrittämiseksi; ensimmäinen aihe saa ID:n 1.
         private static bool increaseCounterValueFromCSV = true;//Katsoo CSV-tiedostosta aiheiden määrän VAIN ohjelman suorituksen alussa >> kun lista luetaan konstruktorissa ensimmäisen kerran, saa arvon false.
@@ -60,12 +60,14 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             //StartLearningDaten määritys
             StartLearningDate = DateTime.Now;
 
+            Description = "-";
+
             //lisätään listalle topics
-            topics.Add(this);
-            Console.WriteLine("\nLisäsit klo " + StartLearningDate + " aiheen " + Title + ", jonka id on "+Id+".\n");
+            //topics.Add(this);
+            //Console.WriteLine("\nLisäsit klo " + StartLearningDate + " aiheen " + Title + ", jonka id on "+Id+".\n");
 
             //luodaan string array, yhdistetään string arrayn osat merkkijonoksi erotettuna pilkulla ja lisätään se csv-tiedostoon
-            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title, this.StartLearningDate.ToString()};
+            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title, this.StartLearningDate.ToString(), this.Description};
             string stringToAppend = String.Join(",", stringsToAppend);
             File.AppendAllText(path, stringToAppend + Environment.NewLine);
             
@@ -81,26 +83,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
         }
 
-        //lisätään suorituksen alussa tuotteet CSV:stä listaan:
-        //public static void AddLinesFromCSVTo()
-        //{
-        //    List<String> newLinesOfDescription = new List<String>();
-        //    foreach (string line in File.ReadLines(path))
-        //    {
-        //        string[] singleLine = line.Split(',');
-        //        if (idOfChosenTopic.ToString() == singleLine[0])//lines[0] = In
-        //        {
-        //            singleLine[2] = newDescription;//lines[2] = Description
-        //        }
-        //        newLinesOfDescription.Add(String.Join(',', singleLine));
-        //    }
-        //    File.Create(path).Close();
-        //    foreach (string line in newLinesOfDescription)
-        //    {
-        //        File.AppendAllText(path, line + Environment.NewLine);
-        //    }
-        //}
-        //tulostaa kaikki aiheet, niiden ID:t ja aloitusajat (=lisäysaika)
+        //tulostaa kaikki aiheet ja niiden ID:t
         public static void PrintAllTopics()
         {
             Console.Clear();
@@ -120,10 +103,9 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     {
                         string[] line = topic.Split(',');
                         Console.WriteLine("Aihe: " + line[1] +
-                            " (tunniste: " + line[0] + ")" +
-                            "\nAloitusaika: " + line[2]);
+                            " (tunniste: " + line[0] + ")");
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         Console.ResetColor();
                     }
                 }
@@ -147,24 +129,32 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         //    Console.WriteLine();
         //}
 
-        public static void PrintAllProperties(int indexOfTopicToPrint)
+        public static void PrintAllProperties(int idOfChosenTopic)
         {
-            Console.Clear();
-            Console.WriteLine("Kaikki aiheen \"{0}\" tiedot:" +
-                "\nId:" + topics[indexOfTopicToPrint].Id +
-                "\nKuvaus: " + topics[indexOfTopicToPrint].Description +
-                "\nAika-arvio, milloin taito hallittu: " + topics[indexOfTopicToPrint].EstimatedTimeToMaster +
-                "\njne. jne." +
-                "\njne. jne.", topics[indexOfTopicToPrint].Title);
-            Console.WriteLine();
+            //List<String> printingArray = new List<String>();
+            foreach (string line in File.ReadLines(path))
+            {
+                string[] singleLine = line.Split(',');
+                if (idOfChosenTopic.ToString() == singleLine[0])//lines[0] = In
+                {
+                    Console.WriteLine("Aihe: " + singleLine[1] +
+                        " (tunniste: " + singleLine[0] + ")" +
+                        "\nAloitusaika: " + singleLine[2] +
+                        "\nKuvaus: " + singleLine[3]);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+                    Console.ResetColor();   
+                }
+            }
         }
 
         public static void ChoosePropertyToSet(int indexOfChosenTopic)
         {
         //tähän pitäisi lisätä tarkitus, onko metodin parametri ok
-        Console.WriteLine("Kirjoita numero, minkä tiedon haluat asettaa: " +
+        Console.WriteLine("\nMitä tietoa haluat muuttaa: " +
             "\n1) Otsikko" +
-            "\n2) Kuvaus");
+            "\n2) Kuvaus\n");
+            AskForId("");
             if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
             {
                 Topic.SetProperty(indexOfChosenTopic, propertyToSet);
@@ -183,7 +173,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     Console.Write("Syötä aiheelle uusi aihe: ");
                     //vaihtaa aiheen listaan
                     string newTopic = Console.ReadLine();
-                    topics[idOfChosenTopic-1].Title = newTopic;
+                    //topics[idOfChosenTopic-1].Title = newTopic;
                     //vaihtaa aiheen csv-tiedostoon: käydään tiedoston rivit läpi
                     List<String> newLines = new List<String>();
                     foreach (string line in File.ReadLines(path)) 
@@ -195,7 +185,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                         }
                         newLines.Add(String.Join(',', singleLine));
                     }
-                    File.Create(path).Close();
+                    File.Create(path).Close();//tyhjentää listan ennen kuin uusi sisältö lisätään
                     foreach (string line in newLines)
                     {
                         File.AppendAllText(path, line + Environment.NewLine);
@@ -208,7 +198,8 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     Console.Write("Syötä aiheelle uusi aihe: ");
                     //vaihtaa kuvauksen listaan
                     string newDescription = Console.ReadLine();
-                    topics[idOfChosenTopic - 1].Description = newDescription;
+                    //topics[idOfChosenTopic - 1].Description = newDescription;
+                    
                     //vaihtaa kuvauksen csv-tiedostoon: käydään tiedoston rivit läpi
                     List<String> newLinesOfDescription = new List<String>();
                     foreach (string line in File.ReadLines(path))
@@ -216,11 +207,11 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                         string[] singleLine = line.Split(',');
                         if (idOfChosenTopic.ToString() == singleLine[0])//lines[0] = In
                         {
-                            singleLine[2] = newDescription;//lines[2] = Description
+                            singleLine[3] = newDescription;//lines[3] = Description
                         }
                         newLinesOfDescription.Add(String.Join(',', singleLine));
                     }
-                    File.Create(path).Close();
+                    File.Create(path).Close();//tyhjentää listan ennen kuin uusi sisältö lisätään
                     foreach (string line in newLinesOfDescription)
                     {
                         File.AppendAllText(path, line + Environment.NewLine);
@@ -234,6 +225,12 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
         }
 
+        public static void AskForId(string whatTypeOfNumber)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write("Kirjoita {0}numero:  ", whatTypeOfNumber);
+            Console.ResetColor();
+        }
     }
 
 }
