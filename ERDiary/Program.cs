@@ -40,6 +40,7 @@ namespace ERDiary
                 "\n2) Tulostaaksesi kaikki aiheet " +
                 "\n3) Muokkaa aihetta tai sen kuvausta" +
                 "\n4) Näytä yhden aiheen kaikki tiedot" +
+                "\n5) Etsi aihe" +
                 "\ntai paina ENTER lopettaaksesi.\n");
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.Write("Valitse toiminto:  ");
@@ -107,6 +108,16 @@ namespace ERDiary
                 }
             }
 
+            else if (input == 5)
+            {
+                Console.Clear();
+                Console.WriteLine("Kirjoita aihe TAI tunnistenumero, jota haluat hakea:");
+                Topic.AskForId("aihe TAI tunniste");
+                string searchObject = Console.ReadLine();
+                Topic.SearchForTopic(searchObject);
+            }
+
+
             else
             {
                 Console.Clear();
@@ -114,8 +125,7 @@ namespace ERDiary
             }
             return true;//jos syöte muuta kuin ENTER, MainMenu() toistoa jatketaan.
         }
-
-
+    
     }
 
 }

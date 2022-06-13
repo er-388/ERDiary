@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
+
 namespace ERDiary
 {
     /*
@@ -15,7 +16,7 @@ StartLearningDate – datetime - Aloitusaika
 InProgress – bool - Onko aiheen opiskelu kesken
 CompletionDate - datetime - Milloin aihe on opiskeltu*/
     public class Topic
-    { 
+    {
         private int Id { get; set; }
         private string Title { get; set; }
         private string Description { get; set; }
@@ -25,17 +26,19 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         private DateTime StartLearningDate { get; set; }
         private bool InProgress { get; set; }
         private DateTime CompletionDate { get; set; }
-        
+
         private static string path = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
         //private static List<Topic> topics = new List<Topic>();
 
         private static int idCounter = 1;//muuttuja ID:n määrittämiseksi; ensimmäinen aihe saa ID:n 1.
-        private static bool increaseCounterValueFromCSV = true;//Katsoo CSV-tiedostosta aiheiden määrän VAIN ohjelman suorituksen alussa >> kun lista luetaan konstruktorissa ensimmäisen kerran, saa arvon false.
+        private static bool increaseCounterValueFromCSV = true;//Katsoo CSV-tiedostosta aiheiden määrän VAIN ohjelman suorituksen alussa
+                                                               //>> kun lista luetaan konstruktorissa ensimmäisen kerran, saa arvon false.
+
 
         public Topic(string title)
         {
             Console.Clear();
-            
+
             //kun ohjelman käynnistyksen jälkeen luodaan ensimmäinen topic, while-loopissa katsotaan CSV-tiedostosta rivien määrä ja määritetään idCounter-muuttujalle oikea arvo. 
             if (File.Exists(path))
             {
@@ -46,7 +49,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                         foreach (string line in File.ReadLines(path)) { idCounter++; }
                         increaseCounterValueFromCSV = false;
                     }
-                        catch (Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                     }
@@ -62,15 +65,11 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
             Description = "-";
 
-            //lisätään listalle topics
-            //topics.Add(this);
-            //Console.WriteLine("\nLisäsit klo " + StartLearningDate + " aiheen " + Title + ", jonka id on "+Id+".\n");
-
             //luodaan string array, yhdistetään string arrayn osat merkkijonoksi erotettuna pilkulla ja lisätään se csv-tiedostoon
-            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title, this.StartLearningDate.ToString(), this.Description};
+            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title, this.StartLearningDate.ToString(), this.Description };
             string stringToAppend = String.Join(",", stringsToAppend);
             File.AppendAllText(path, stringToAppend + Environment.NewLine);
-            
+
             //testataan, että tallentunut tiedostoon
             if (File.Exists(path))
             {
@@ -82,6 +81,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 }
             }
         }
+        
 
         //tulostaa kaikki aiheet ja niiden ID:t
         public static void PrintAllTopics()
@@ -129,6 +129,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         //    Console.WriteLine();
         //}
 
+        //metodi tulostaa parametrina saadun ID:n mukaisen aiheen kaikki tiedot
         public static void PrintAllProperties(int idOfChosenTopic)
         {
             //List<String> printingArray = new List<String>();
@@ -148,7 +149,8 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
         }
 
-        public static void ChoosePropertyToSet(int indexOfChosenTopic)
+        //tässä metodissa valitaan mitä attribuuttia haluaa muuttaa. Metodi kutsuu metodia SetProperty().
+        public static void ChoosePropertyToSet(int idOfChosenTopic)
         {
         //tähän pitäisi lisätä tarkitus, onko metodin parametri ok
         Console.WriteLine("\nMitä tietoa haluat muuttaa: " +
@@ -157,7 +159,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             AskForId("");
             if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
             {
-                Topic.SetProperty(indexOfChosenTopic, propertyToSet);
+                Topic.SetProperty(idOfChosenTopic, propertyToSet);
             }
             else
             {
@@ -165,57 +167,22 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
         }
 
+        //Metodi muuttaa parametrina saadun ID:n ja attribuutin mukaisesti tietoja
         public static void SetProperty(int idOfChosenTopic, int propertyToSet)
         {
             switch (propertyToSet)
             {
                 case 1:
                     Console.Write("Syötä aiheelle uusi aihe: ");
-                    //vaihtaa aiheen listaan
-                    string newTopic = Console.ReadLine();
-                    //topics[idOfChosenTopic-1].Title = newTopic;
-                    //vaihtaa aiheen csv-tiedostoon: käydään tiedoston rivit läpi
-                    List<String> newLines = new List<String>();
-                    foreach (string line in File.ReadLines(path)) 
-                    {
-                        string[] singleLine = line.Split(',');
-                        if (idOfChosenTopic.ToString() == singleLine[0])//lines[0] = In
-                        {
-                            singleLine[1] = newTopic;//lines[1] = Title
-                        }
-                        newLines.Add(String.Join(',', singleLine));
-                    }
-                    File.Create(path).Close();//tyhjentää listan ennen kuin uusi sisältö lisätään
-                    foreach (string line in newLines)
-                    {
-                        File.AppendAllText(path, line + Environment.NewLine);
-                    }
+                    string newProperty = Console.ReadLine();
+
+                    EditPropertyInCSV(idOfChosenTopic, propertyToSet, newProperty);
                     break;
 
                 case 2:
-                    //Console.Write("Syötä aiheen kuvaus: ");
-                    //topics[idOfChosenTopic].Description = Console.ReadLine();
-                    Console.Write("Syötä aiheelle uusi aihe: ");
-                    //vaihtaa kuvauksen listaan
+                    Console.Write("Syötä aiheelle uusi kuvaus: ");
                     string newDescription = Console.ReadLine();
-                    //topics[idOfChosenTopic - 1].Description = newDescription;
-                    
-                    //vaihtaa kuvauksen csv-tiedostoon: käydään tiedoston rivit läpi
-                    List<String> newLinesOfDescription = new List<String>();
-                    foreach (string line in File.ReadLines(path))
-                    {
-                        string[] singleLine = line.Split(',');
-                        if (idOfChosenTopic.ToString() == singleLine[0])//lines[0] = In
-                        {
-                            singleLine[3] = newDescription;//lines[3] = Description
-                        }
-                        newLinesOfDescription.Add(String.Join(',', singleLine));
-                    }
-                    File.Create(path).Close();//tyhjentää listan ennen kuin uusi sisältö lisätään
-                    foreach (string line in newLinesOfDescription)
-                    {
-                        File.AppendAllText(path, line + Environment.NewLine);
-                    }
+                    EditPropertyInCSV(idOfChosenTopic, propertyToSet, newDescription);
                     break;
 
                 default:
@@ -225,6 +192,108 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
         }
 
+        private static void EditPropertyInCSV(int idOfChosenTopic, int indexOfPropertyToSet, string newProperty)
+        {
+            //Muutetaan käyttäjän syöte vastaamaan CSV-tiedoston muotoa: 1 >> lines[1] = Title, 2 >> lines[3] = Description
+            if (indexOfPropertyToSet == 2)
+            {
+                indexOfPropertyToSet = 3;
+            }
+            //käydään tiedoston rivit läpi
+            List<String> newLines = new List<String>();
+            foreach (string line in File.ReadLines(path))
+            {
+                string[] singleLine = line.Split(',');
+                if (idOfChosenTopic.ToString() == singleLine[0])//lines[0] = In
+                {
+                    singleLine[indexOfPropertyToSet] = newProperty;//lines[1] = Title, lines[3] = Description
+                }
+                newLines.Add(String.Join(',', singleLine));
+            }
+            File.Create(path).Close();//tyhjentää listan ennen kuin uusi sisältö lisätään
+            foreach (string line in newLines)
+            {
+                File.AppendAllText(path, line + Environment.NewLine);
+            }
+        }
+
+
+        //Metodi tekee käyttäjän syötteen mukaisen haun 
+        public static void SearchForTopic(string searchObject)
+        {
+            Dictionary<int, string> topicsDict = CreateDictionaryFromCSV();//kutsutaan sanakirjan palauttavaa metodia
+            if (Int32.TryParse(searchObject, out int searchObjectNumber) == true) 
+            {
+                //etsitään numerolla
+                if (topicsDict.ContainsKey(searchObjectNumber))
+                {
+                    Console.WriteLine("Löytyi! Tunnisteella {0} etsimäsi aihe on {1}!", searchObjectNumber, topicsDict[searchObjectNumber]);
+                }
+                else { Console.WriteLine("Tunnisteella {0} ei löytynyt aihetta.", searchObjectNumber); }
+            }
+            else
+            {
+                //etsitään aiheella tai sen osalla. Haku ei ole merkkikokoriippuvainen (toLower)
+                List<string> topicsFound = new List<string>();
+                for (int i = 1; i <= topicsDict.Count; i++)
+                {
+                    if (topicsDict[i].ToLower().Contains(searchObject.ToLower()))
+                    {
+                        //Console.WriteLine("Löytyi! Etsimäsi aiheen {0} tunniste on {1}.", topicsDict[i], i);
+                        topicsFound.Add(topicsDict[i]);
+                    }
+                }
+                if (topicsFound.Count == 0) 
+                {
+                    Console.WriteLine("Aihetta {0} ei löytynyt.", searchObject);
+                }
+                else 
+                //jos topicsFound.Count ei ole 0, suoritetaan topicsFound.Countin mukainen koodilohko
+                {
+                    switch (topicsFound.Count)
+                    {
+                        case 1:
+                            Console.WriteLine("Haulla löytyi yksi aihe \"{0}\".", topicsFound[0]);
+                            break;
+                        case 2:
+                            Console.WriteLine("Haulla löytyi aiheet \"{0}\" ja \"{1}\".", topicsFound[0], topicsFound[1]);
+                            break;
+                        default:
+                            Console.WriteLine("Haulla löytyi seuraavat aiheet:");
+                            foreach (string title in topicsFound)
+                            {
+                                Console.WriteLine(title);
+                            }
+                            break;
+                    }
+                }
+                    
+            }
+        }
+
+
+        //Metodi palauttaa CSV-tiedostosta luodun sanakirjan (TKey = int ID, TValue = string topic)
+        private static Dictionary<int, string> CreateDictionaryFromCSV()
+        {
+            Dictionary<int, string> topicsDict = new Dictionary<int, string>();
+            //käydään läpi CSV-tiedosto ja lisätään sanakirjaoliot
+            try
+            {
+                foreach (string line in File.ReadLines(path))
+                {
+                    string[] singleLine = line.Split(',');
+                    topicsDict.Add(Convert.ToInt32(singleLine[0]), singleLine[1]);//singleLine[0] = ID, singleLine[1] = topic                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return topicsDict;
+        }
+
+        //Metodi tulostaa punaisella värillä kentän, johon käyttäjä syöttää numeron (jotta kenttä on helpompi huomata muun tekstin joukosta)
         public static void AskForId(string whatTypeOfNumber)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
