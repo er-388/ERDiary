@@ -38,7 +38,7 @@ namespace ERDiary
             Console.ResetColor();
             Console.Write("\n1) Syöttääksesi uusi aihe" +
                 "\n2) Tulostaaksesi kaikki aiheet " +
-                "\n3) Muokkaa aihetta tai sen kuvausta" +
+                "\n3) Aiheen tietojen muokkaaminen tai aiheen poisto" +
                 "\n4) Näytä yhden aiheen kaikki tiedot" +
                 "\n5) Etsi aihe" +
                 "\ntai paina ENTER lopettaaksesi.\n");
@@ -116,6 +116,7 @@ namespace ERDiary
                 string searchObject = Console.ReadLine();
                 Topic.SearchForTopic(searchObject);
             }
+
 
 
             else

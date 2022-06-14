@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 
 namespace ERDiary
 {
@@ -114,7 +114,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                         string[] line = topic.Split(',');
                         Console.WriteLine("Aihe: " + line[1] +
                             " (tunniste: " + line[0] + ")");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         Console.ResetColor();
                     }
@@ -180,7 +180,8 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             "\n3) Asian opiskeluun kuluva aika" +
             "\n4) Asian opiskeluun käytetty aika" +
             "\n5) Lähde (esim. kirja tai URL)" +
-            "\n6) Aseta aihe opiskelluksi");
+            "\n6) Aseta aihe opiskelluksi" +
+            "\n7) Poista aihe");
             AskForId("");
             if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
             {
@@ -234,6 +235,10 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     EditPropertyInCSV(idOfChosenTopic, 6, false.ToString());//muuttaa InProgress = false;
                     break;
 
+                case 7://Poistaa aiheen
+                    DeleteTopic(idOfChosenTopic);
+                    break;
+
                 default:
                     Console.WriteLine("Vain otsikkoa (=1) ja kuvausta (=2) voi toistaiseksi muuttaa!");//Muut ominaisuudet kesken!
                     break;
@@ -261,6 +266,24 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
         }
 
+        private static void DeleteTopic(int idOfChosenTopic)
+        {
+            List<string> afterDeleting = new List<string>();
+
+            foreach (string line in File.ReadLines(path))
+            {
+                string[] singleLine = line.Split(',');
+                if (idOfChosenTopic.ToString() == singleLine[0])
+                {
+                    continue;
+                }
+                afterDeleting.Add(String.Join(',', singleLine));
+            }
+            File.Create(path).Close();
+            File.AppendAllLines(path, afterDeleting);
+            Console.WriteLine("\nPoistit aiheen tunnisteella {0}.", idOfChosenTopic);
+
+        }
 
         //Metodi tekee käyttäjän syötteen mukaisen haun 
         public static void SearchForTopic(string searchObject)
