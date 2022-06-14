@@ -63,10 +63,20 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             //StartLearningDaten määritys
             StartLearningDate = DateTime.Now;
 
-            Description = "-";
+            Description = "";
+            EstimatedTimeToMaster = 0;
+            TimeSpent = 0;
+            InProgress = true;
+            Source = "";
+            
 
             //luodaan string array, yhdistetään string arrayn osat merkkijonoksi erotettuna pilkulla ja lisätään se csv-tiedostoon
-            string[] stringsToAppend = new string[] { this.Id.ToString(), this.Title, this.StartLearningDate.ToString(), this.Description };
+            string[] stringsToAppend = new string[] { 
+                this.Id.ToString(), this.Title, 
+                this.StartLearningDate.ToString(), this.Description, 
+                this.EstimatedTimeToMaster.ToString(), this.TimeSpent.ToString(), 
+                this.InProgress.ToString(), this.Source,
+                ""};//viimeinen "" on CompletionDate
             string stringToAppend = String.Join(",", stringsToAppend);
             File.AppendAllText(path, stringToAppend + Environment.NewLine);
 
@@ -132,7 +142,6 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         //metodi tulostaa parametrina saadun ID:n mukaisen aiheen kaikki tiedot
         public static void PrintAllProperties(int idOfChosenTopic)
         {
-            //List<String> printingArray = new List<String>();
             foreach (string line in File.ReadLines(path))
             {
                 string[] singleLine = line.Split(',');
@@ -141,10 +150,22 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     Console.WriteLine("Aihe: " + singleLine[1] +
                         " (tunniste: " + singleLine[0] + ")" +
                         "\nAloitusaika: " + singleLine[2] +
-                        "\nKuvaus: " + singleLine[3]);
+                        "\nKuvaus: " + singleLine[3] +
+                        "\nOpiskeluun kuluva aika (h): " + singleLine[4].Replace('.', ',') + //vaihtaa suomalaisen desimaalierottimen
+                        "\nOpiskeluun käytetty aika (h): " + singleLine[5].Replace('.', '.'));//vaihtaa suomalaisen desimaalierottimen
+                    if (singleLine[6].ToLower() == "true")
+                    {
+                        Console.WriteLine("Aiheen oppiminen kesken: Kyllä");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Aiheen oppiminen kesken: Ei");
+                    }
+                    Console.WriteLine("Lähde: " + singleLine[7]);
+                    Console.WriteLine("Opiskelu loppunut: " + singleLine[8]);
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-                    Console.ResetColor();   
+                    Console.ResetColor();
                 }
             }
         }
@@ -155,7 +176,11 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         //tähän pitäisi lisätä tarkitus, onko metodin parametri ok
         Console.WriteLine("\nMitä tietoa haluat muuttaa: " +
             "\n1) Otsikko" +
-            "\n2) Kuvaus\n");
+            "\n2) Kuvaus" +
+            "\n3) Asian opiskeluun kuluva aika" +
+            "\n4) Asian opiskeluun käytetty aika" +
+            "\n5) Lähde (esim. kirja tai URL)" +
+            "\n6) Aseta aihe opiskelluksi");
             AskForId("");
             if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
             {
@@ -176,13 +201,37 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     Console.Write("Syötä aiheelle uusi aihe: ");
                     string newProperty = Console.ReadLine();
 
-                    EditPropertyInCSV(idOfChosenTopic, propertyToSet, newProperty);
+                    EditPropertyInCSV(idOfChosenTopic, 1, newProperty);//title on CSV:ssä indeksissä 1
                     break;
 
                 case 2:
                     Console.Write("Syötä aiheelle uusi kuvaus: ");
                     string newDescription = Console.ReadLine();
-                    EditPropertyInCSV(idOfChosenTopic, propertyToSet, newDescription);
+                    EditPropertyInCSV(idOfChosenTopic, 3, newDescription);//description on CSV:ssä indeksissä 3
+                    break;
+
+                case 3:
+                    Console.Write("Montako tuntia aiheen opetteluun kuluu? ");
+                    string estimatedTimeToMaster = Console.ReadLine();
+                    EditPropertyInCSV(idOfChosenTopic, 4, estimatedTimeToMaster);//EstimatedTimeToMaster on CSV:ssä indeksissä 4
+                    break;
+
+                case 4://TimeSpent
+                    Console.Write("Montako tuntia olet opiskellut aihetta? ");
+                    string timeSpent = Console.ReadLine();
+                    EditPropertyInCSV(idOfChosenTopic, 5, timeSpent);//TimeSpent on CSV:ssä indeksissä 5
+                    break;
+
+                case 5://string Source
+                    Console.Write("Kirjoita opiskelussa käyttämäsi lähteet (kirja ja/tai nettisivu): ");
+                    string Source = Console.ReadLine();
+                    EditPropertyInCSV(idOfChosenTopic, 7, Source);//Source on CSV:ssä indeksissä 7
+                    break;
+
+                case 6://CompletionDate
+
+                    EditPropertyInCSV(idOfChosenTopic, 8, DateTime.Today.ToString("dd.MM.yyyy"));//
+                    EditPropertyInCSV(idOfChosenTopic, 6, false.ToString());//muuttaa InProgress = false;
                     break;
 
                 default:
@@ -194,13 +243,8 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
         private static void EditPropertyInCSV(int idOfChosenTopic, int indexOfPropertyToSet, string newProperty)
         {
-            //Muutetaan käyttäjän syöte vastaamaan CSV-tiedoston muotoa: 1 >> lines[1] = Title, 2 >> lines[3] = Description
-            if (indexOfPropertyToSet == 2)
-            {
-                indexOfPropertyToSet = 3;
-            }
-            //käydään tiedoston rivit läpi
             List<String> newLines = new List<String>();
+            //käydään tiedoston rivit läpi
             foreach (string line in File.ReadLines(path))
             {
                 string[] singleLine = line.Split(',');
@@ -208,7 +252,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 {
                     singleLine[indexOfPropertyToSet] = newProperty;//lines[1] = Title, lines[3] = Description
                 }
-                newLines.Add(String.Join(',', singleLine));
+                newLines.Add(String.Join(',', singleLine));//lisää loopissa kunkin rivin string arrayn osaset listaan eroteltuina pilkulla.
             }
             File.Create(path).Close();//tyhjentää listan ennen kuin uusi sisältö lisätään
             foreach (string line in newLines)
@@ -221,7 +265,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         //Metodi tekee käyttäjän syötteen mukaisen haun 
         public static void SearchForTopic(string searchObject)
         {
-            Dictionary<int, string> topicsDict = CreateDictionaryFromCSV();//kutsutaan sanakirjan palauttavaa metodia
+            Dictionary<int, string> topicsDict = CreateDictionaryFromCSV();//kutsutaan sanakirjan luovaa ja palauttavaa metodia
             if (Int32.TryParse(searchObject, out int searchObjectNumber) == true) 
             {
                 //etsitään numerolla
@@ -231,6 +275,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 }
                 else { Console.WriteLine("Tunnisteella {0} ei löytynyt aihetta.", searchObjectNumber); }
             }
+
             else
             {
                 //etsitään aiheella tai sen osalla. Haku ei ole merkkikokoriippuvainen (toLower)
@@ -270,7 +315,6 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     
             }
         }
-
 
         //Metodi palauttaa CSV-tiedostosta luodun sanakirjan (TKey = int ID, TValue = string topic)
         private static Dictionary<int, string> CreateDictionaryFromCSV()
