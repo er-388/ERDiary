@@ -34,7 +34,43 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         private static bool increaseCounterValueFromCSV = true;//Katsoo CSV-tiedostosta aiheiden määrän VAIN ohjelman suorituksen alussa
                                                                //>> kun lista luetaan konstruktorissa ensimmäisen kerran, saa arvon false.
 
+        private Topic(string id, string title,
+                string startLearningDate, string description,
+                string estimatedTimeToMaster, string timeSpent,
+                string inProgress, string source, string completionDate)
+        {
+            Id = Int32.Parse(id);//int 
+            Title = title;
+            Description = description;
+            EstimatedTimeToMaster = Double.Parse(estimatedTimeToMaster);
+            TimeSpent = Double.Parse(timeSpent);
+            Source = source;
 
+            // parsetaan merkkijonosta DateTime-muoto dtStart
+            DateTime.TryParseExact(startLearningDate, "dd/MM/yyyy HH:MM:ss", System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"), 
+                System.Globalization.DateTimeStyles.None, out DateTime dtStart);
+            StartLearningDate = dtStart;
+
+            InProgress = Convert.ToBoolean(inProgress);
+            // parsetaan merkkijonosta DateTime-muoto dtComplete
+            DateTime.TryParseExact(completionDate, "dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"),
+                System.Globalization.DateTimeStyles.None, out DateTime dtComplete);
+            CompletionDate = dtComplete;
+        }
+        
+
+        private static List<Topic> CreateTopicList()
+        {
+            List<Topic> topics = new List<Topic>();
+            foreach (string line in File.ReadLines(path))
+            {
+                string[] singleLine = line.Split(',');
+                topics.Add(new Topic(singleLine[0], singleLine[1], singleLine[2], singleLine[3], singleLine[4], singleLine[5], singleLine[6], singleLine[7], singleLine[8]));
+            }
+            return topics;
+        }
+
+        // Tässä konstruktorissa lisätään topic CSV-tiedostoon
         public Topic(string title)
         {
             Console.Clear();
@@ -91,10 +127,10 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 }
             }
         }
-        
 
-        //tulostaa kaikki aiheet ja niiden ID:t
-        public static void PrintAllTopics()
+
+        //tulostaa kaikki aiheet ja niiden ID:t suoraan CSV:stä
+        /*public static void PrintAllTopics()
         {
             Console.Clear();
             //yritetään lukea tiedosto
@@ -127,17 +163,25 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
             Console.WriteLine();
 
+        }*/
+
+
+        //PrintAllTopics()-metodi Linqiä käyttäen
+        public static void PrintAllTopics()
+        {
+            List<Topic> topics = CreateTopicList();
+            Console.Clear();
+            var results = topics.Select(topic => "Tunniste: " + topic.Id.ToString() + " " + topic.Title);
+            //var results2 = topics.Select(topic => topic.Id + topic.Title);
+            foreach (string line in results)
+            {
+                Console.WriteLine(line);
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                Console.ResetColor();
+            }
         }
-        //public static void PrintAllIdsAndTopics()
-        //{
-        //    Console.Clear();
-        //    Console.WriteLine("Kaikki aiheet (id ja aihe):");
-        //    foreach (var topic in topics)
-        //    {
-        //        Console.WriteLine(topic.Id + ") " + topic.Title);
-        //    }
-        //    Console.WriteLine();
-        //}
+
 
         //metodi tulostaa parametrina saadun ID:n mukaisen aiheen kaikki tiedot
         public static void PrintAllProperties(int idOfChosenTopic)
@@ -153,14 +197,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                         "\nKuvaus: " + singleLine[3] +
                         "\nOpiskeluun kuluva aika (h): " + singleLine[4].Replace('.', ',') + //vaihtaa suomalaisen desimaalierottimen
                         "\nOpiskeluun käytetty aika (h): " + singleLine[5].Replace('.', '.'));//vaihtaa suomalaisen desimaalierottimen
-                    if (singleLine[6].ToLower() == "true")
-                    {
-                        Console.WriteLine("Aiheen oppiminen kesken: Kyllä");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Aiheen oppiminen kesken: Ei");
-                    }
+                    Console.WriteLine("Aiheen oppiminen kesken: " + ((singleLine[6].ToLower() == "true") ? "Kyllä" : "Ei"));
                     Console.WriteLine("Lähde: " + singleLine[7]);
                     Console.WriteLine("Opiskelu loppunut: " + singleLine[8]);
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -169,6 +206,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 }
             }
         }
+
 
         //tässä metodissa valitaan mitä attribuuttia haluaa muuttaa. Metodi kutsuu metodia SetProperty().
         public static void ChoosePropertyToSet(int idOfChosenTopic)
@@ -192,6 +230,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                 Console.WriteLine("Syötä numero.");
             }
         }
+
 
         //Metodi muuttaa parametrina saadun ID:n ja attribuutin mukaisesti tietoja
         public static void SetProperty(int idOfChosenTopic, int propertyToSet)
@@ -231,8 +270,8 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
                 case 6://CompletionDate
 
-                    EditPropertyInCSV(idOfChosenTopic, 8, DateTime.Today.ToString("dd.MM.yyyy"));//
-                    EditPropertyInCSV(idOfChosenTopic, 6, false.ToString());//muuttaa InProgress = false;
+                    EditPropertyInCSV(idOfChosenTopic, 8, DateTime.Today.ToString("dd.MM.yyyy"));//CompletionDate indeksissä 8
+                    EditPropertyInCSV(idOfChosenTopic, 6, false.ToString());//muuttaa InProgress = false indeksiin 6;
                     break;
 
                 case 7://Poistaa aiheen
@@ -245,6 +284,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
 
         }
+
 
         private static void EditPropertyInCSV(int idOfChosenTopic, int indexOfPropertyToSet, string newProperty)
         {
@@ -266,6 +306,8 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
         }
 
+
+        //Poistaa CSV-tiedostosta käyttäjän haluaman aiheen tunnisteen perusteella
         private static void DeleteTopic(int idOfChosenTopic)
         {
             List<string> afterDeleting = new List<string>();
@@ -273,17 +315,19 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             foreach (string line in File.ReadLines(path))
             {
                 string[] singleLine = line.Split(',');
+                //Jos CSV:stä saatu tunniste on sama kuin tunniste, jonka käyttäjä haluaa poistettavaksi, ei mennä loopissa eteenpäin lisäämään ko. riviä afterDeleting-listalle.
                 if (idOfChosenTopic.ToString() == singleLine[0])
                 {
                     continue;
                 }
                 afterDeleting.Add(String.Join(',', singleLine));
             }
-            File.Create(path).Close();
-            File.AppendAllLines(path, afterDeleting);
+            File.Create(path).Close();//kirjoittaa aiemman tiedoston päälle tyhjän tiedoston
+            File.AppendAllLines(path, afterDeleting);//täsä eri lisäyskoodi kuin ylempänä
             Console.WriteLine("\nPoistit aiheen tunnisteella {0}.", idOfChosenTopic);
 
         }
+
 
         //Metodi tekee käyttäjän syötteen mukaisen haun 
         public static void SearchForTopic(string searchObject)
@@ -339,6 +383,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
         }
 
+
         //Metodi palauttaa CSV-tiedostosta luodun sanakirjan (TKey = int ID, TValue = string topic)
         private static Dictionary<int, string> CreateDictionaryFromCSV()
         {
@@ -359,6 +404,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
             return topicsDict;
         }
+
 
         //Metodi tulostaa punaisella värillä kentän, johon käyttäjä syöttää numeron (jotta kenttä on helpompi huomata muun tekstin joukosta)
         public static void AskForId(string whatTypeOfNumber)
