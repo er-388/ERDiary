@@ -5,16 +5,6 @@ using System.Linq;
 
 namespace ERDiary
 {
-    /*
-     Id – int - Tähän talletetaan kyseisen aiheen tunniste
-Title – string - Aiheen otsikko
-Description – string - Aiheen kuvaus
-EstimatedTimeToMaster  - double - Aika-arvio, kuinka kauan aiheen oppimiseen kuluu aikaa
-TimeSpent - double - Käytetty aika
-Source – string - Mahdollinen lähde esim web url tai kirja
-StartLearningDate – datetime - Aloitusaika
-InProgress – bool - Onko aiheen opiskelu kesken
-CompletionDate - datetime - Milloin aihe on opiskeltu*/
     public class Topic
     {
         private int Id { get; set; }
@@ -30,16 +20,18 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         private static string path = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
         //private static List<Topic> topics = new List<Topic>();
 
-        private static int idCounter = 1;//muuttuja ID:n määrittämiseksi; ensimmäinen aihe saa ID:n 1.
-        private static bool increaseCounterValueFromCSV = true;//Katsoo CSV-tiedostosta aiheiden määrän VAIN ohjelman suorituksen alussa
+        //private static int idCounter = 1;//Ei enää käytössä; muuttuja ID:n määrittämiseksi; ensimmäinen aihe saa ID:n 1.
+        //private static bool increaseCounterValueFromCSV = true;//Ei enää käytössä. Muuttuja käytössä, kun CSV-tiedostosta luetaan aiheiden määrä ohjelman suorituksen alussa
                                                                //>> kun lista luetaan konstruktorissa ensimmäisen kerran, saa arvon false.
 
+        
+        // Tämä konstruktori on käytössä, kun CSV:stä luodaan List<Topic>
         private Topic(string id, string title,
                 string startLearningDate, string description,
                 string estimatedTimeToMaster, string timeSpent,
                 string inProgress, string source, string completionDate)
         {
-            Id = Int32.Parse(id);//int 
+            Id = Int32.Parse(id);
             Title = title;
             Description = description;
             EstimatedTimeToMaster = Double.Parse(estimatedTimeToMaster);
@@ -47,54 +39,34 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             Source = source;
 
             // parsetaan merkkijonosta DateTime-muoto dtStart
-            DateTime.TryParseExact(startLearningDate, "dd/MM/yyyy HH:MM:ss", System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"), 
+            DateTime.TryParseExact(startLearningDate, 
+                "dd/MM/yyyy HH:MM:ss", 
+                System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"), 
                 System.Globalization.DateTimeStyles.None, out DateTime dtStart);
             StartLearningDate = dtStart;
 
             InProgress = Convert.ToBoolean(inProgress);
+
             // parsetaan merkkijonosta DateTime-muoto dtComplete
-            DateTime.TryParseExact(completionDate, "dd/MM/yyyy", System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"),
+            DateTime.TryParseExact(completionDate, 
+                "dd/MM/yyyy", 
+                System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"),
                 System.Globalization.DateTimeStyles.None, out DateTime dtComplete);
             CompletionDate = dtComplete;
         }
-        
 
-        private static List<Topic> CreateTopicList()
-        {
-            List<Topic> topics = new List<Topic>();
-            foreach (string line in File.ReadLines(path))
-            {
-                string[] singleLine = line.Split(',');
-                topics.Add(new Topic(singleLine[0], singleLine[1], singleLine[2], singleLine[3], singleLine[4], singleLine[5], singleLine[6], singleLine[7], singleLine[8]));
-            }
-            return topics;
-        }
 
-        // Tässä konstruktorissa lisätään topic CSV-tiedostoon
+        // Tässä konstruktorissa lisätään topic CSV-tiedostoon käyttäjän syötteestä
         public Topic(string title)
         {
             Console.Clear();
-
-            //kun ohjelman käynnistyksen jälkeen luodaan ensimmäinen topic, while-loopissa katsotaan CSV-tiedostosta rivien määrä ja määritetään idCounter-muuttujalle oikea arvo. 
-            if (File.Exists(path))
-            {
-                while (increaseCounterValueFromCSV)
-                {
-                    try
-                    {
-                        foreach (string line in File.ReadLines(path)) { idCounter++; }
-                        increaseCounterValueFromCSV = false;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
+            
             Title = title;
-            //Id = topics.Count + 1;//ID määritetty ennen kuin Topic lisätään listalle >> topics.Count + 1
-            Id = idCounter;
-            idCounter++;
+
+            //luodaan lista topiceista seuraavan ID:n määrittämistä varten
+            List<Topic> topics = CreateTopicList();
+            //haetaan suurin topic.Id-arvo ja lisätään siihen 1, jotta saadaan luotavan Topicin ID
+            Id = topics.Max(topic => topic.Id) + 1;
 
             //StartLearningDaten määritys
             StartLearningDate = DateTime.Now;
@@ -104,30 +76,49 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             TimeSpent = 0;
             InProgress = true;
             Source = "";
-            
 
             //luodaan string array, yhdistetään string arrayn osat merkkijonoksi erotettuna pilkulla ja lisätään se csv-tiedostoon
             string[] stringsToAppend = new string[] { 
-                this.Id.ToString(), this.Title, 
-                this.StartLearningDate.ToString(), this.Description, 
-                this.EstimatedTimeToMaster.ToString(), this.TimeSpent.ToString(), 
-                this.InProgress.ToString(), this.Source,
-                ""};//viimeinen "" on CompletionDate
-            string stringToAppend = String.Join(",", stringsToAppend);
-            File.AppendAllText(path, stringToAppend + Environment.NewLine);
+                this.Id.ToString(), 
+                this.Title, 
+                this.StartLearningDate.ToString(), 
+                this.Description, 
+                this.EstimatedTimeToMaster.ToString(), 
+                this.TimeSpent.ToString(), 
+                this.InProgress.ToString(), 
+                this.Source,
+                ""};//viimeinen "" on CompletionDate, joka ei saa vielä arvoa
+            string stringToAppend = String.Join(",", stringsToAppend);//luodaan string arraystä merkkijono, jonka osaset on eroteltu pilkuilla
+            File.AppendAllText(path, stringToAppend + Environment.NewLine);//lisätään edellisellä rivillä luotu merkkijono CSV-tiedostoon
 
-            //testataan, että tallentunut tiedostoon
+            //testataan, että tallentunut tiedostoon - tulostetaan tiedoston kaikki rivit
             if (File.Exists(path))
             {
-                string[] testing;
-                testing = File.ReadAllLines(path);
-                foreach (string topic in testing)
-                {
-                    Console.WriteLine("Tiedostosta tulostettu: " + topic);
-                }
+                foreach (string line in File.ReadLines(path))
+                    Console.WriteLine("Tiedostosta tulostettu: " + line);
             }
         }
 
+        //Metodi luo listan Topic-olioista muiden metodien käyttöä varten.
+        private static List<Topic> CreateTopicList()
+        {
+            List<Topic> topics = new List<Topic>();
+            if (File.Exists(path))
+            {
+                foreach (string line in File.ReadLines(path))
+                {
+                    string[] singleLine = line.Split(',');
+                    topics.Add(new Topic(singleLine[0], singleLine[1], singleLine[2], singleLine[3], singleLine[4], singleLine[5], singleLine[6], singleLine[7], singleLine[8]));
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nEt ole luonut vielä yhtään aihetta!");
+                Console.Write("Jatka painamalla jotakin näppäintä. ");
+                Console.ReadLine();
+            }
+            return topics;
+        }
 
         //tulostaa kaikki aiheet ja niiden ID:t suoraan CSV:stä
         /*public static void PrintAllTopics()
@@ -167,18 +158,27 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
 
         //PrintAllTopics()-metodi Linqiä käyttäen
-        public static void PrintAllTopics()
+        public static bool PrintAllTopics()
         {
-            List<Topic> topics = CreateTopicList();
             Console.Clear();
-            var results = topics.Select(topic => "Tunniste: " + topic.Id.ToString() + " " + topic.Title);
-            //var results2 = topics.Select(topic => topic.Id + topic.Title);
-            foreach (string line in results)
+            List<Topic> topics = CreateTopicList();
+            
+            if (topics.Count == 0)
             {
-                Console.WriteLine(line);
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                Console.ResetColor();
+                    return false;
+            }
+            else
+            {
+                    var results = topics.Select(topic => "Tunniste: " + topic.Id.ToString() + " " + topic.Title);
+                    foreach (string line in results)
+                    {
+                        Console.WriteLine(line);
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                        Console.ResetColor();
+                    }
+                    return true;
+
             }
         }
 
@@ -270,7 +270,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
 
                 case 6://CompletionDate
 
-                    EditPropertyInCSV(idOfChosenTopic, 8, DateTime.Today.ToString("dd.MM.yyyy"));//CompletionDate indeksissä 8
+                    EditPropertyInCSV(idOfChosenTopic, 8, DateTime.Today.ToString("dd.MM.yyyy"));//CompletionDate on CSV:ssä indeksissä 8
                     EditPropertyInCSV(idOfChosenTopic, 6, false.ToString());//muuttaa InProgress = false indeksiin 6;
                     break;
 
@@ -279,13 +279,13 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
                     break;
 
                 default:
-                    Console.WriteLine("Vain otsikkoa (=1) ja kuvausta (=2) voi toistaiseksi muuttaa!");//Muut ominaisuudet kesken!
+                    Console.WriteLine("Valitse toiminto numeroilla 1-7!");//
                     break;
             }
 
         }
 
-
+        //metodi muuttaa parametrina saadun ID-numeron, aiheen ja saadun uuden attribuutin mukaisesti CSV-tiedostoa
         private static void EditPropertyInCSV(int idOfChosenTopic, int indexOfPropertyToSet, string newProperty)
         {
             List<String> newLines = new List<String>();
@@ -333,54 +333,57 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
         public static void SearchForTopic(string searchObject)
         {
             Dictionary<int, string> topicsDict = CreateDictionaryFromCSV();//kutsutaan sanakirjan luovaa ja palauttavaa metodia
-            if (Int32.TryParse(searchObject, out int searchObjectNumber) == true) 
-            {
-                //etsitään numerolla
-                if (topicsDict.ContainsKey(searchObjectNumber))
+            
+                if (Int32.TryParse(searchObject, out int searchObjectNumber) == true)
                 {
-                    Console.WriteLine("Löytyi! Tunnisteella {0} etsimäsi aihe on {1}!", searchObjectNumber, topicsDict[searchObjectNumber]);
+                    //etsitään numerolla, jos käyttäjän syöte on numero
+                    if (topicsDict.ContainsKey(searchObjectNumber))
+                    {
+                        Console.WriteLine("Löytyi! Tunnisteella {0} etsimäsi aihe on {1}!", searchObjectNumber, topicsDict[searchObjectNumber]);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Tunnisteella {0} ei löytynyt aihetta.", searchObjectNumber);
+                    }
                 }
-                else { Console.WriteLine("Tunnisteella {0} ei löytynyt aihetta.", searchObjectNumber); }
-            }
 
-            else
-            {
-                //etsitään aiheella tai sen osalla. Haku ei ole merkkikokoriippuvainen (toLower)
-                List<string> topicsFound = new List<string>();
-                for (int i = 1; i <= topicsDict.Count; i++)
+                else
                 {
-                    if (topicsDict[i].ToLower().Contains(searchObject.ToLower()))
+                    //etsitään aiheella tai sen osalla, jos käyttäjän syöte ei ollut numero. Haku ei ole merkkikokoriippuvainen (toLower)
+                    List<string> topicsFound = new List<string>();
+                    for (int i = 1; i <= topicsDict.Count; i++)
                     {
-                        //Console.WriteLine("Löytyi! Etsimäsi aiheen {0} tunniste on {1}.", topicsDict[i], i);
-                        topicsFound.Add(topicsDict[i]);
+                        if (topicsDict[i].ToLower().Contains(searchObject.ToLower()))
+                        {
+                            //Console.WriteLine("Löytyi! Etsimäsi aiheen {0} tunniste on {1}.", topicsDict[i], i);
+                            topicsFound.Add(topicsDict[i]);
+                        }
+                    }
+                    if (topicsFound.Count == 0)
+                    {
+                        Console.WriteLine("Aihetta {0} ei löytynyt.", searchObject);
+                    }
+                    else
+                    //jos topicsFound.Count ei ole 0, suoritetaan topicsFound.Countin mukainen koodilohko
+                    {
+                        switch (topicsFound.Count)
+                        {
+                            case 1:
+                                Console.WriteLine("Haulla löytyi yksi aihe \"{0}\".", topicsFound[0]);
+                                break;
+                            case 2:
+                                Console.WriteLine("Haulla löytyi aiheet \"{0}\" ja \"{1}\".", topicsFound[0], topicsFound[1]);
+                                break;
+                            default:
+                                Console.WriteLine("Haulla löytyi seuraavat aiheet:");
+                                foreach (string title in topicsFound)
+                                {
+                                    Console.WriteLine(title);
+                                }
+                                break;
+                        }
                     }
                 }
-                if (topicsFound.Count == 0) 
-                {
-                    Console.WriteLine("Aihetta {0} ei löytynyt.", searchObject);
-                }
-                else 
-                //jos topicsFound.Count ei ole 0, suoritetaan topicsFound.Countin mukainen koodilohko
-                {
-                    switch (topicsFound.Count)
-                    {
-                        case 1:
-                            Console.WriteLine("Haulla löytyi yksi aihe \"{0}\".", topicsFound[0]);
-                            break;
-                        case 2:
-                            Console.WriteLine("Haulla löytyi aiheet \"{0}\" ja \"{1}\".", topicsFound[0], topicsFound[1]);
-                            break;
-                        default:
-                            Console.WriteLine("Haulla löytyi seuraavat aiheet:");
-                            foreach (string title in topicsFound)
-                            {
-                                Console.WriteLine(title);
-                            }
-                            break;
-                    }
-                }
-                    
-            }
         }
 
 
@@ -399,7 +402,7 @@ CompletionDate - datetime - Milloin aihe on opiskeltu*/
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Lisää ensin jokin aihe!");//Tiedosta ei löydy, jos yhtään aihetta ei ole luotu.
             }
 
             return topicsDict;

@@ -73,41 +73,45 @@ namespace ERDiary
             else if (input == 3)
             {
                 //ohjelma kaatuu, jos CSV-tiedostoa ei ole ja käyttäjä jatkaa tiedon muokkaamiseen
-                //Tulostaa listan kaikista aiheista. Kysytään käyttäjältä mitä aihetta haluaa muokata.
-                Topic.PrintAllTopics();
-                Console.WriteLine("Minkä aiheen tietoja haluat muokata?\n");
-                Topic.AskForId("tunniste");
-                //jos syöte on numero, siirrytään metodiin, josta valitaan mitä valitun aiheen ominaisuutta halutaan muokata.
-                if (Int32.TryParse(Console.ReadLine(), out int idOfTopicToEdit) == true)
+                
+                if (Topic.PrintAllTopics() == true)
                 {
-                    Topic.ChoosePropertyToSet(idOfTopicToEdit);
-                }
-                else
-                {
-                    Console.WriteLine("Syötä numero.");
+                    Console.WriteLine("Minkä aiheen tietoja haluat muokata?\n");
+                    Topic.AskForId("tunniste");
+                    //jos syöte on numero, siirrytään metodiin, josta valitaan mitä valitun aiheen ominaisuutta halutaan muokata.
+                    if (Int32.TryParse(Console.ReadLine(), out int idOfTopicToEdit) == true)
+                    {
+                        Topic.ChoosePropertyToSet(idOfTopicToEdit);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Syötä numero.");
+                    }
                 }
             }
 
             else if (input == 4)//Tulostaa kaikki valittavan aiheen tiedot
             {
-                //ohjelma kaatuu, jos CSV-tiedostoa ei ole   
-                Topic.PrintAllTopics();
-                Console.WriteLine("Minkä aiheen kaikki tiedot haluat nähdä?");
-                Topic.AskForId("tunniste");
-                if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true)
+                if (Topic.PrintAllTopics() ==  true)
                 {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\nAiheen {0} kaikki tiedot", topicToPrint);
-                    Console.ResetColor();
-                    Topic.PrintAllProperties(topicToPrint);
-                }
-                else
-                {
-                    Console.WriteLine("Syötä numero.");
+                    Console.WriteLine("Minkä aiheen kaikki tiedot haluat nähdä?");
+                    Topic.AskForId("tunniste");
+                    if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true)
+                    {
+                        Console.Clear();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nAiheen {0} kaikki tiedot", topicToPrint);
+                        Console.ResetColor();
+                        Topic.PrintAllProperties(topicToPrint);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Syötä numero.");
+                    }
                 }
             }
 
+            //käyttäjä voi hakea
             else if (input == 5)
             {
                 Console.Clear();
