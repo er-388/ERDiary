@@ -56,17 +56,34 @@ namespace ERDiary
         }
 
 
-        // Tässä konstruktorissa lisätään topic CSV-tiedostoon käyttäjän syötteestä
+        // Tässä konstruktorissa lisätään topic CSV-tiedostoon, kun käyttäjä on syöttänyt aiheen.
         public Topic(string title)
         {
             Console.Clear();
             
             Title = title;
 
-            //luodaan lista topiceista seuraavan ID:n määrittämistä varten
-            List<Topic> topics = CreateTopicList();
-            //haetaan suurin topic.Id-arvo ja lisätään siihen 1, jotta saadaan luotavan Topicin ID
-            Id = topics.Max(topic => topic.Id) + 1;
+            //luodaan lista topiceista seuraavan ID:n määrittämistä varten, jos tiedosto on olemassa.
+            if (File.Exists(path))
+            {
+                List<Topic> topics = CreateTopicList();
+                // jos topics-lista ei ole tyhjä...
+                if (topics.Count != 0)
+                {
+                    //...haetaan suurin topic.Id-arvo ja lisätään siihen 1, jotta saadaan luotavan Topicin ID
+                    Id = topics.Max(topic => topic.Id) + 1;
+                }
+                //jos topics-lista on tyhjä, annetaan ID:ksi 1.
+                else
+                {
+                    Id = 1;
+                }
+            }
+            //jos tiedostoa ei ole olemassa, annetaan ID:ksi 1.
+            else
+            {
+                Id = 1;
+            }
 
             //StartLearningDaten määritys
             StartLearningDate = DateTime.Now;
@@ -98,6 +115,7 @@ namespace ERDiary
                     Console.WriteLine("Tiedostosta tulostettu: " + line);
             }
         }
+
 
         //Metodi luo listan Topic-olioista muiden metodien käyttöä varten.
         private static List<Topic> CreateTopicList()
@@ -165,7 +183,8 @@ namespace ERDiary
             
             if (topics.Count == 0)
             {
-                    return false;
+                Console.WriteLine("Yhtään aihetta ei ole lisättynä!");
+                return false;
             }
             else
             {
@@ -332,14 +351,22 @@ namespace ERDiary
         //Metodi tekee käyttäjän syötteen mukaisen haun 
         public static void SearchForTopic(string searchObject)
         {
+            
             Dictionary<int, string> topicsDict = CreateDictionaryFromCSV();//kutsutaan sanakirjan luovaa ja palauttavaa metodia
             
-                if (Int32.TryParse(searchObject, out int searchObjectNumber) == true)
+            //jos saadussa sanakirjassa ei ole yhtään aihetta, tulostetaan käyttäjälle ilmoitus ja lopetetaan tämän metodin suorittaminen
+            if (topicsDict.Count == 0)
+            {
+                Console.WriteLine("Et ole vielä lisännyt yhtään aihetta!");
+                return;
+            }
+
+            if (Int32.TryParse(searchObject, out int searchObjectNumber) == true)
                 {
                     //etsitään numerolla, jos käyttäjän syöte on numero
                     if (topicsDict.ContainsKey(searchObjectNumber))
                     {
-                        Console.WriteLine("Löytyi! Tunnisteella {0} etsimäsi aihe on {1}!", searchObjectNumber, topicsDict[searchObjectNumber]);
+                        Console.WriteLine("Löytyi! Tunnisteella {0} etsimäsi aihe on {1}.", searchObjectNumber, topicsDict[searchObjectNumber]);
                     }
                     else
                     {
@@ -364,7 +391,7 @@ namespace ERDiary
                         Console.WriteLine("Aihetta {0} ei löytynyt.", searchObject);
                     }
                     else
-                    //jos topicsFound.Count ei ole 0, suoritetaan topicsFound.Countin mukainen koodilohko
+                    //jos topicsFound.Count ei ole 0, suoritetaan topicsFound.Countin mukainen switch/case-koodilohko
                     {
                         switch (topicsFound.Count)
                         {
@@ -400,9 +427,8 @@ namespace ERDiary
                     topicsDict.Add(Convert.ToInt32(singleLine[0]), singleLine[1]);//singleLine[0] = ID, singleLine[1] = topic                    
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("Lisää ensin jokin aihe!");//Tiedosta ei löydy, jos yhtään aihetta ei ole luotu.
             }
 
             return topicsDict;

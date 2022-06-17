@@ -111,14 +111,21 @@ namespace ERDiary
                 }
             }
 
-            //käyttäjä voi hakea
+            //käyttäjä voi hakea aihetta tunnistenumeron tai aiheen perusteella
             else if (input == 5)
             {
                 Console.Clear();
                 Console.WriteLine("Kirjoita aihe TAI tunnistenumero, jota haluat hakea:");
                 Topic.AskForId("aihe TAI tunniste");
                 string searchObject = Console.ReadLine();
-                Topic.SearchForTopic(searchObject);
+                if (String.IsNullOrWhiteSpace(searchObject) == true)
+                {
+                    Console.WriteLine("Kirjoita aihe tai tunnistenumero hakeaksesi aihetta!");
+                }
+                else
+                {
+                    Topic.SearchForTopic(searchObject);
+                }
             }
 
 
