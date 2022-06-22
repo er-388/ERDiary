@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using ERDiary.Models;
 
 namespace ERDiary
 {
@@ -7,9 +10,7 @@ namespace ERDiary
     {
         static void Main(string[] args)
         {
-            //tyhjentää tiedoston ajon aluksi (testailua varten)
-            //string pathToClear = @"C:\Users\Erkki\source\repos\ERDiary\data.csv";
-            //File.Create(pathToClear).Close();
+            
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
 
@@ -39,7 +40,7 @@ namespace ERDiary
             Console.Write("\n1) Syöttääksesi uusi aihe" +
                 "\n2) Tulostaaksesi kaikki aiheet " +
                 "\n3) Aiheen tietojen muokkaaminen tai aiheen poisto" +
-                "\n4) Näytä yhden aiheen kaikki tiedot" +
+                "\n4) Näytä yhden aiheen kaikki tiedot (EI TOIMI)" +
                 "\n5) Etsi aihe" +
                 "\ntai paina ENTER lopettaaksesi.\n");
             Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -52,32 +53,39 @@ namespace ERDiary
                 return false;//lopettaa MainMenun (ja ohjelman) suorituksen
             }
 
+
             else if (Int32.TryParse(stringInput, out int input) == false)//tarkistaa onko syöte kokonaisluku
             {
                 Console.WriteLine("Syötä numero.");
             }
 
-            else if (input == 1)//lisää aiheen tiedostoon ja listaan topics
+            //Kysyy käyttäjältä aihetta ja lisää sen tietokantaan
+            else if (input == 1)
             {
                 Console.Write("Syötä aihe: ");
                 string title = Console.ReadLine();
-                Topic t = new Topic(title);
+
+                ERDiary.Models.Topic t = new ERDiary.Models.Topic(title);
             }
 
+            //Tulostaa kaikki aiheet
             else if (input == 2)
             {
-                Console.WriteLine("Kaikki syötetyt aiheet:");
+                Console.Clear();
+                Console.WriteLine("Kaikki syötetyt aiheet:\n");
                 Topic.PrintAllTopics();
             }
+            
 
+            //Käyttäjä voi muokata valitsemansa aiheen tietoja
             else if (input == 3)
             {
-                //ohjelma kaatuu, jos CSV-tiedostoa ei ole ja käyttäjä jatkaa tiedon muokkaamiseen
-                
+                Console.Clear();
+                //PrintAllTopics() palauttaa true jos yksikin aihe on luotu.
                 if (Topic.PrintAllTopics() == true)
                 {
                     Console.WriteLine("Minkä aiheen tietoja haluat muokata?\n");
-                    Topic.AskForId("tunniste");
+                    Console.Write("Kirjota aiheen tunnistenumero: ");
                     //jos syöte on numero, siirrytään metodiin, josta valitaan mitä valitun aiheen ominaisuutta halutaan muokata.
                     if (Int32.TryParse(Console.ReadLine(), out int idOfTopicToEdit) == true)
                     {
@@ -89,13 +97,13 @@ namespace ERDiary
                     }
                 }
             }
-
+            /*
             else if (input == 4)//Tulostaa kaikki valittavan aiheen tiedot
             {
                 if (Topic.PrintAllTopics() ==  true)
                 {
                     Console.WriteLine("Minkä aiheen kaikki tiedot haluat nähdä?");
-                    Topic.AskForId("tunniste");
+                    
                     if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true)
                     {
                         Console.Clear();
@@ -110,13 +118,14 @@ namespace ERDiary
                     }
                 }
             }
-
+            */
             //käyttäjä voi hakea aihetta tunnistenumeron tai aiheen perusteella
             else if (input == 5)
             {
                 Console.Clear();
                 Console.WriteLine("Kirjoita aihe TAI tunnistenumero, jota haluat hakea:");
-                Topic.AskForId("aihe TAI tunniste");
+                Console.Write("Kirjoita aihe TAI tunnistenumero: ");    
+            
                 string searchObject = Console.ReadLine();
                 if (String.IsNullOrWhiteSpace(searchObject) == true)
                 {
@@ -124,11 +133,43 @@ namespace ERDiary
                 }
                 else
                 {
-                    Topic.SearchForTopic(searchObject);
+                    
+                    List<string> searchResult = Topic.SearchForTopic(searchObject);
+
+                    if (searchResult.Count == 1)
+                    {
+                        Console.WriteLine("Haullasi \"{0}\" löytyi aihe {1}.", searchObject, searchResult[0]);
+                    
+                    }
+
+                    if (searchResult.Count == 2)
+                    {
+                        Console.WriteLine("Haullasi \"{0}\" löytyi tulokset {1} ja {2}.", searchObject, searchResult[0], searchResult[1]);
+                    }
+                    
+                    if (searchResult.Count > 2)
+                    {
+                        Console.WriteLine("Haullasi löytyi seuraavat aiheet: ");
+                        foreach (string title in searchResult)
+                        {
+                            Console.WriteLine(title);
+                        }
+                    }
+                    
+                    else if (searchResult.Count == 0)
+                    {
+                        Console.WriteLine("Haullasi \"{0}\" ei löytynyt aiheita.", searchObject);
+                    }
+
                 }
+
+
+
+
+                
             }
 
-
+            
 
             else
             {
