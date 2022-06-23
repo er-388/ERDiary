@@ -38,7 +38,7 @@ namespace ERDiary.Models
                 }
                 catch { }
 
-                Id = suurinId +1;
+                Id = suurinId + 1;
                 Title = title;
                 StartLearningDate = DateTime.Now;
                 InProgress = true;
@@ -62,17 +62,17 @@ namespace ERDiary.Models
                 {
                     Console.WriteLine("{0} (Tunnistenumero: {1})", result.Title, result.Id);
                 }
+                
                 if (results.Count() == 0)
                 {
                     return false;
                 }
+
                 else
                 {
                     return true;
                 }
             }
-            
-
         }
 
 
@@ -195,9 +195,9 @@ namespace ERDiary.Models
 
                 case 6://Asettaa päättymispäivän käyttäjän syötteen mukaisesti ja muuttaa InProgress = false
 
-                    Console.Write("Milloin aiheen opiskelu on päättynyt? Kirjoita muodossa pp.kk.vvvv: ");
+                    Console.Write("Milloin aiheen opiskelu on päättynyt? Kirjoita muodossa pp.kk.vvvv: \n");
                     if (DateTime.TryParseExact(Console.ReadLine(), 
-                        "dd.M.yyyy",
+                        "d.M.yyyy",
                         System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"),
                         System.Globalization.DateTimeStyles.None,
                         out DateTime completionDate) 
@@ -217,7 +217,7 @@ namespace ERDiary.Models
 
                     else
                     {
-
+                        Console.WriteLine("Päivämäärä ei ollut oikein!");
                     }
 
                     break;
@@ -230,7 +230,6 @@ namespace ERDiary.Models
                     Console.WriteLine("Valitse toiminto numerolla 1-7!");//
                     break;
             }
-
         }
 
 
@@ -240,20 +239,44 @@ namespace ERDiary.Models
             using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
             {
                 var result = tietokantaYhteys.Topics.FirstOrDefault(topic => topic.Id == idOfChosenTopic);
-                //var result = tietokantaYhteys.Topics.Find(idOfChosenTopic);
-                
-                //if (result != null)
-                //{
                 tietokantaYhteys.Topics.Remove(result);
                 tietokantaYhteys.SaveChanges();
-                //}
-
-                //else
-                //{
-                //    Console.WriteLine("Valitsemallasi tunnisteella ei löytynyt aihetta!");
-                //}
-
             }
+        }
+
+
+        //Palauttaa List<string>-listan haetun aiheen attribuuteista
+        public static List<string> PrintAllProperties(int topicToPrint)
+        {
+            List<string> result = new List<string>();
+            if (SearchForTopic(topicToPrint.ToString()).Count != 1)
+            {
+                return result;
+            }
+
+            using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
+            {
+                try
+                {
+                    Topic foundTopic = tietokantaYhteys.Topics.First(topic => topic.Id == topicToPrint);
+                    string[] s = new string[] {  
+                        foundTopic.Title,
+                        foundTopic.Id.ToString(),
+                        foundTopic.Description, 
+                        foundTopic.TimeToMaster.ToString(), 
+                        foundTopic.TimeSpent.ToString(), 
+                        foundTopic.Source, 
+                        foundTopic.StartLearningDate.ToString(), 
+                        foundTopic.InProgress.ToString(), 
+                        foundTopic.CompletionDate.ToString() };
+                    result = s.ToList();
+                }
+                catch
+                {
+                    Console.WriteLine("Et ole vielä lisännyt yhtään aihetta!");
+                }
+            }
+            return result;
         }
 
 
@@ -287,12 +310,10 @@ namespace ERDiary.Models
                         .Where(topic => topic.Title.ToLower()
                         .Contains(searchObject.ToLower()))
                         .Select(topic => topic.Title).ToList();
-                    
                 }
                 return result;
             }
         }
-
 
 
     }
