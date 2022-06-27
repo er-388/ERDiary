@@ -180,17 +180,19 @@ namespace ERDiary.Models
                     }                    
                     break;
 
-                //case 5://string Source
-                //    Console.Write("Kirjoita opiskelussa käyttämäsi lähteet (kirja ja/tai nettisivu): ");
-                //    string source = Console.ReadLine();
+                case 5://string Source
+                    Console.Write("Kirjoita opiskelussa käyttämäsi lähteet (kirja ja/tai nettisivu): ");
+                    string source = Console.ReadLine();
 
-                //    using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
-                //    {
-                //        var result = tietokantaYhteys.Topics.SingleOrDefault(topic => topic.Id == idOfChosenTopic);
-                //        result.Source = source;
-                //        tietokantaYhteys.SaveChanges();
-                //    }
-                //    break;
+
+                    using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
+                    {
+                        var result = tietokantaYhteys.Topics.SingleOrDefault(topic => topic.Id == idOfChosenTopic);
+                        result.Source = source;
+                        tietokantaYhteys.SaveChanges();
+                    }
+                    break;
+
 
                 case 6://Asettaa päättymispäivän käyttäjän syötteen mukaisesti ja muuttaa InProgress = false
 
