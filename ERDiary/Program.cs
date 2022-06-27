@@ -37,7 +37,8 @@ namespace ERDiary
        VALIKKO
     ~~~~~~~~~~~~~");
             Console.ResetColor();
-            Console.WriteLine("\n1) Syöttääksesi uusi aihe" +
+            Console.WriteLine("\n   Toiminnot" +
+                "\n1) Syöttääksesi uusi aihe" +
                 "\n2) Tulostaaksesi kaikki aiheet " +
                 "\n3) Aiheen tietojen muokkaaminen tai aiheen poisto" +
                 "\n4) Näytä yhden aiheen kaikki tiedot" +
