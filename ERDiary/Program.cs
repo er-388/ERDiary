@@ -37,12 +37,13 @@ namespace ERDiary
        VALIKKO
     ~~~~~~~~~~~~~");
             Console.ResetColor();
-            Console.Write("\n1) Syöttääksesi uusi aihe" +
+            Console.WriteLine("\n   Kirjoita:" + 
+                "\n1) Syöttääksesi uusi aihe" +
                 "\n2) Tulostaaksesi kaikki aiheet " +
                 "\n3) Aiheen tietojen muokkaaminen tai aiheen poisto" +
                 "\n4) Näytä yhden aiheen kaikki tiedot" +
                 "\n5) Etsi aihe" +
-                "\ntai paina ENTER lopettaaksesi.\n");
+                "\ntai paina ENTER lopettaaksesi.");
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.Write("Valitse toiminto:  ");
             Console.ResetColor();
@@ -82,7 +83,8 @@ namespace ERDiary
             else if (input == 3)
             {
                 Console.Clear();
-                //PrintAllTopics() palauttaa true jos yksikin aihe on luotu.
+                Console.WriteLine("Kaikki aiheet:");
+                //PrintAllTopics() tulostaa aiheet ja palauttaa true jos yksikin aihe on luotu.
                 if (Topic.PrintAllTopics() == true)
                 {
                     Console.WriteLine("Minkä aiheen tietoja haluat muokata?\n");

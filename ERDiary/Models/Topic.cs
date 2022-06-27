@@ -53,7 +53,6 @@ namespace ERDiary.Models
         // Tulostaa kaikki aiheet ja tunnistenumerot tietokannasta. Palauttaa true jos ainakin 1 aihe löytyy, muutoin palauttaa false.
         public static bool PrintAllTopics() 
         {
-            Console.WriteLine("Kaikki aiheet:\n");
             using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
             {
                 var results = tietokantaYhteys.Topics.Select(topic => new { Title = topic.Title, Id = topic.Id });
