@@ -186,8 +186,9 @@ namespace ERDiary.Models
 
                     using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
                     {
-                        var result = tietokantaYhteys.Topics.SingleOrDefault(topic => topic.Id == idOfChosenTopic);
-                        result.Source = source;
+                        source = "Testataan!";
+                        Topic result = tietokantaYhteys.Topics.SingleOrDefault(topic => topic.Id == idOfChosenTopic);
+                        result.Source = source + " " + source;
                         tietokantaYhteys.SaveChanges();
                     }
                     break;
