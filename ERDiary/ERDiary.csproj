@@ -13,4 +13,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ClassLibraryExercise">
+      <HintPath>..\libs\ClassLibraryExercise\ClassLibraryExercise\bin\Debug\netcoreapp3.1\ClassLibraryExercise.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

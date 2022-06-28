@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ClassLibraryExercise;
 
 #nullable disable
 
@@ -202,8 +203,10 @@ namespace ERDiary.Models
                         System.Globalization.CultureInfo.CreateSpecificCulture("fi-FI"),
                         System.Globalization.DateTimeStyles.None,
                         out DateTime completionDate) 
-                        == true) 
+                        == true
+                        && Class1.OnkoTulevaisuudesta(completionDate) == false) 
                     {
+
                         using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
                         {
                             var result = tietokantaYhteys.Topics.SingleOrDefault(topic => topic.Id == idOfChosenTopic);
@@ -218,7 +221,7 @@ namespace ERDiary.Models
 
                     else
                     {
-                        Console.WriteLine("Päivämäärä ei ollut oikein!");
+                        Console.WriteLine("Päivämäärä ei ollut oikein tai päivämäärä on tulevaisuudessa!");
                     }
 
                     break;
