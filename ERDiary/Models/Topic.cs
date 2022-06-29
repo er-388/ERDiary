@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ClassLibraryExercise;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -31,7 +33,7 @@ namespace ERDiary.Models
             using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
             {
                 var taulu = tietokantaYhteys.Topics.Select(topic => topic);
-                //Määritetään Id-numero: jos tietokannassa on ID:itä, katsotaan se tietokannasta.   
+                //Määritetään Id-numero: jos tietokannassa on ID:itä, katsotaan suurin ID tietokannasta.   
                 var suurinId = 0;
                 try
                 {
@@ -52,11 +54,13 @@ namespace ERDiary.Models
 
 
         // Tulostaa kaikki aiheet ja tunnistenumerot tietokannasta. Palauttaa true jos ainakin 1 aihe löytyy, muutoin palauttaa false.
-        public static bool PrintAllTopics() 
+        public async static Task<bool> PrintAllTopicsAsync() 
         {
             using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
             {
-                var results = tietokantaYhteys.Topics.Select(topic => new { Title = topic.Title, Id = topic.Id });
+                var results = await Task.Run(() => 
+                tietokantaYhteys.Topics.Select(topic => 
+                new { Title = topic.Title, Id = topic.Id }));
 
                 foreach (var result in results)
                 {
@@ -77,10 +81,11 @@ namespace ERDiary.Models
 
 
         //tässä metodissa valitaan mitä attribuuttia haluaa muuttaa. Metodi kutsuu metodia SetProperty().
-        public static void ChoosePropertyToSet(int idOfChosenTopic)
+        public async static Task ChoosePropertyToSet(int idOfChosenTopic)
         {
-            //Tarkistetaan metodilla SearchForTopic() onko onko käyttäjän syöttämä ID-numero olemassa 
-            if (SearchForTopic(idOfChosenTopic.ToString()).Count == 1)
+            //Tarkistetaan palauttaako metodi SearchForTopic() listan, jossa on yksi alkio
+            List<string> idExists = await SearchForTopicAsync(idOfChosenTopic.ToString());
+            if (idExists.Count == 1)
             {
                 Console.WriteLine("\nMitä tietoa haluat muuttaa?" +
                     "\n1) Otsikko" +
@@ -194,7 +199,6 @@ namespace ERDiary.Models
                     }
                     break;
 
-
                 case 6://Asettaa päättymispäivän käyttäjän syötteen mukaisesti ja muuttaa InProgress = false
 
                     Console.Write("Milloin aiheen opiskelu on päättynyt? Kirjoita muodossa pp.kk.vvvv: \n");
@@ -250,10 +254,13 @@ namespace ERDiary.Models
 
 
         //Palauttaa List<string>-listan haetun aiheen attribuuteista
-        public static List<string> PrintAllProperties(int topicToPrint)
+        public static async Task<List<string>> PrintAllProperties(int topicToPrint)
         {
             List<string> result = new List<string>();
-            if (SearchForTopic(topicToPrint.ToString()).Count != 1)
+            
+            //Tarkistetaan SearchForTopicAsync()-metodilla löytyykö haluttua ID:tä 
+            List<string> idExists = await SearchForTopicAsync(topicToPrint.ToString());
+            if (idExists.Count != 1)
             {
                 return result;
             }
@@ -262,7 +269,8 @@ namespace ERDiary.Models
             {
                 try
                 {
-                    Topic foundTopic = tietokantaYhteys.Topics.First(topic => topic.Id == topicToPrint);
+                    Topic foundTopic = await (tietokantaYhteys.Topics.SingleOrDefaultAsync(topic => topic.Id == topicToPrint));
+
                     string[] s = new string[] {  
                         foundTopic.Title,
                         foundTopic.Id.ToString(),
@@ -284,9 +292,8 @@ namespace ERDiary.Models
         }
 
 
-
         //Haetaan käyttäjän syötteen mukaan joko ID:n tai titlen mukaan aihetta ja näytetään tulokset käyttäjälle
-        public static List<string> SearchForTopic(string searchObject)
+        public static async Task<List<string>> SearchForTopicAsync(string searchObject)
         {
             using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
             {
@@ -296,12 +303,12 @@ namespace ERDiary.Models
                 {
                     try
                     {
-                        result.Add(tietokantaYhteys.Topics
+                        await Task.Run(() => result.Add(tietokantaYhteys.Topics
                             .Where(topic => topic.Id == searchId)
                             .Select(topic => topic.Title)
-                            .First());
+                            .First()));
                     }
-                    catch 
+                    catch
                     {
                         
                     }
@@ -310,10 +317,11 @@ namespace ERDiary.Models
 
                 else
                 {
-                    result = tietokantaYhteys.Topics
+                    result = await Task.Run(() => 
+                    tietokantaYhteys.Topics
                         .Where(topic => topic.Title.ToLower()
                         .Contains(searchObject.ToLower()))
-                        .Select(topic => topic.Title).ToList();
+                        .Select(topic => topic.Title).ToList());
                 }
                 return result;
             }

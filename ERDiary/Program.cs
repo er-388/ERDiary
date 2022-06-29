@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using ERDiary.Models;
+using System.Threading.Tasks;
 
 namespace ERDiary
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             
 
@@ -22,15 +21,21 @@ namespace ERDiary
             Console.ResetColor();
 
             //ShowMenu() palauttaa false, jos käyttäjä haluaa lopettaa eli painaa valikossa ENTER.
-            bool showMenu = true;
-            while (showMenu)
+
+            //bool showMenu = true;
+            while (await MainMenuAsync())
             {
-                showMenu = MainMenu();
+                
             }
+            
+
+            
+            
         }
 
-        static bool MainMenu()
+        static async Task<bool> MainMenuAsync()
         {
+            bool showMenu;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(@"
     ~~~~~~~~~~~~~
@@ -44,18 +49,21 @@ namespace ERDiary
                 "\n4) Näytä yhden aiheen kaikki tiedot" +
                 "\n5) Etsi aihe" +
                 "\ntai paina ENTER lopettaaksesi.");
+            
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.Write("Valitse toiminto:  ");
             Console.ResetColor();
             string stringInput = Console.ReadLine();
 
+
             if (String.IsNullOrWhiteSpace(stringInput))
             {
-                return false;//lopettaa MainMenun (ja ohjelman) suorituksen
+                showMenu = false; ;//lopettaa MainMenun (ja ohjelman) suorituksen
+                return showMenu;
             }
 
-
-            else if (Int32.TryParse(stringInput, out int input) == false)//tarkistaa onko syöte kokonaisluku
+            //tarkistaa onko syöte kokonaisluku ja luo kokonaislukumuuttujan "input"
+            else if (Int32.TryParse(stringInput, out int input) == false)
             {
                 Console.WriteLine("Syötä numero.");
             }
@@ -75,16 +83,19 @@ namespace ERDiary
             {
                 Console.Clear();
                 Console.WriteLine("Kaikki syötetyt aiheet:\n");
-                Topic.PrintAllTopics();
+                await Topic.PrintAllTopicsAsync();
+                Console.WriteLine("Jatketaan ohjelman suoritusta.");
+                
             }
             
-
+            
             //Käyttäjä voi muokata valitsemansa aiheen tietoja
             else if (input == 3)
             {
                 Console.Clear();
-                //PrintAllTopics() tulostaa aiheet ja palauttaa true jos yksikin aihe on luotu.
-                if (Topic.PrintAllTopics() == true)
+                //tulostaa aiheet ja palauttaa true jos yksikin aihe on luotu.
+
+                if (await Topic.PrintAllTopicsAsync() == true)
                 {
                     Console.WriteLine("Minkä aiheen tietoja haluat muokata?\n");
                     Console.Write("Kirjota aiheen tunnistenumero: ");
@@ -92,7 +103,7 @@ namespace ERDiary
                     //jos syöte on numero, siirrytään metodiin, josta valitaan mitä valitun aiheen ominaisuutta halutaan muokata.
                     if (Int32.TryParse(Console.ReadLine(), out int idOfTopicToEdit) == true)
                     {
-                        Topic.ChoosePropertyToSet(idOfTopicToEdit);
+                        await Topic.ChoosePropertyToSet(idOfTopicToEdit);
                     }
                     
                     else
@@ -102,18 +113,19 @@ namespace ERDiary
                 }
             }
 
-
+            
+            
             //Tulostaa kaikki valittavan aiheen tiedot
             else if (input == 4)
             {
-                if (Topic.PrintAllTopics() ==  true)
+                if (await Topic.PrintAllTopicsAsync() ==  true)
                 {
                     Console.WriteLine("Minkä aiheen kaikki tiedot haluat nähdä?");
                     
                     if (Int32.TryParse(Console.ReadLine(), out int topicToPrint) == true)
                     {
                         Console.Clear();
-                        List<string> printResult = Topic.PrintAllProperties(topicToPrint);
+                        List<string> printResult = await Topic.PrintAllProperties(topicToPrint);
                         if (printResult.Count != 0)
                         {   
                             //Jos tieto puuttuu, muutetaan tulostusta varten kentän tiedoksi "---"
@@ -144,8 +156,8 @@ namespace ERDiary
                             Console.WriteLine("Valitsemallasi tunnistenumerolla ei löytynyt aihetta.");
                         }
 
+                    
                     }
-
                     else
                     {
                         Console.WriteLine("Syötä numero.");//Jos tulostettavan aiheen tunnistenumeroa pyydettäessä ei ole syötetty numeroa
@@ -153,7 +165,7 @@ namespace ERDiary
                 }
             }
             
-
+            
             //käyttäjä voi hakea aihetta tunnistenumeron tai aiheen perusteella
             else if (input == 5)
             {
@@ -169,7 +181,7 @@ namespace ERDiary
                 else
                 {
 
-                    List<string> searchResult = Topic.SearchForTopic(searchObject);
+                    List<string> searchResult = await Topic.SearchForTopicAsync(searchObject);
 
                     if (searchResult.Count == 1)
                     {
@@ -203,9 +215,12 @@ namespace ERDiary
                 Console.WriteLine("Kokeile uudestaan.");//käyttäjä syöttänyt MainMenun() sisällä jotakun muuta kuin 1-5 tai ENTER.
             }
 
-            return true;//jos syöte muuta kuin ENTER, MainMenu() toistoa jatketaan.
+            showMenu = true;
+            return showMenu;//jos syöte muuta kuin ENTER, MainMenu() toistoa jatketaan.
         }
+
     
     }
+
 
 }
