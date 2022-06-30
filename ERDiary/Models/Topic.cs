@@ -329,4 +329,95 @@ namespace ERDiary.Models
 
 
     }
+
+    public class TaskObject : Topic
+    {
+
+        protected List<string> Notes { get; set; }
+        protected DateTime Deadline { get; set; }
+        protected _Priority Priority { get; set; }  //low, medium, high
+        protected bool Done { get; set; }
+        
+        private static TaskObject[] taskArray = new TaskObject[100];
+
+        public TaskObject()
+        {
+
+        }
+
+        public TaskObject(string title, DateTime deadline, string priority)
+        {
+            //Etsitään suurin ID
+            int highestTaskId = 0;
+            try
+            {
+                foreach (TaskObject task in taskArray)
+                {
+                    if (task != null)
+                    {
+                        if (task.Id > highestTaskId)
+                        {
+                            highestTaskId = task.Id;
+                        }
+                    }
+                }
+            }
+            catch (NullReferenceException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (Exception)
+            {
+
+            }
+            
+            this.Id = highestTaskId + 1;
+            this.Title = title;
+            this.Deadline = deadline;
+            
+            if (priority == "matala")
+            {
+                this.Priority = _Priority.Low;
+            }
+            if (priority == "keski" || priority == "keskitaso")
+            {
+                this.Priority = _Priority.Medium;
+            }
+            if (priority == "korkea")
+            {
+                this.Priority = _Priority.High;
+            }
+            this.Deadline = deadline;
+            this.Done = false;
+            taskArray[this.Id] = this;
+
+        }
+
+
+        public static List<string> PrintAllTaskTitles()
+        {
+            List<string> taskTitles = new List<string>();
+            if (taskArray.Count() > 0)
+            {
+                foreach (TaskObject task in taskArray)
+                {
+                    if (task != null)
+                    {
+                        taskTitles.Add(task.Title);
+                    }
+                }
+            }
+            return taskTitles;
+        }
+
+
+
+        public enum _Priority
+        {
+            High = 1,
+            Medium = 2,
+            Low = 3
+
+        }
+    }
 }
