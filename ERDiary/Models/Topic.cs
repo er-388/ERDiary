@@ -33,6 +33,7 @@ namespace ERDiary.Models
             using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
             {
                 var taulu = tietokantaYhteys.Topics.Select(topic => topic);
+
                 //Määritetään Id-numero: jos tietokannassa on ID:itä, katsotaan suurin ID tietokannasta.   
                 var suurinId = 0;
                 try
@@ -98,7 +99,7 @@ namespace ERDiary.Models
                                     
                 if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
                 {
-                    Topic.SetProperty(idOfChosenTopic, propertyToSet);
+                    Topic.SetPropertyAsync(idOfChosenTopic, propertyToSet);
                 }
                 else
                 {
@@ -114,7 +115,7 @@ namespace ERDiary.Models
 
 
         //Metodi muuttaa parametrina saadun ID:n ja attribuutin mukaisesti tietoja
-        public static void SetProperty(int idOfChosenTopic, int propertyToSet)
+        public static async Task SetPropertyAsync(int idOfChosenTopic, int propertyToSet)
         {
             switch (propertyToSet)
             {
@@ -327,6 +328,17 @@ namespace ERDiary.Models
             }
         }
 
+        public static void Testi()
+        {
+            using (LearningDiaryContext testiYhteys = new LearningDiaryContext())
+            {
+                List<Topic> aiheet = testiYhteys.Topics.ToList();
+                foreach (var item in aiheet)
+                {
+                    Console.WriteLine(item.Title);
+                }
+            }
+        }
 
     }
 
@@ -390,7 +402,6 @@ namespace ERDiary.Models
             this.Deadline = deadline;
             this.Done = false;
             taskArray[this.Id] = this;
-
         }
 
 

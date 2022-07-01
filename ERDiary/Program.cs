@@ -10,8 +10,8 @@ namespace ERDiary
     {
         static async Task Main(string[] args)
         {
-            
 
+            Topic.Testi();
             Console.ForegroundColor = ConsoleColor.DarkGray;
 
             Console.WriteLine(@"  _   _   _ ___      ___  __  _ o  o ___    o  o    ___  _           
@@ -28,9 +28,6 @@ namespace ERDiary
             {
                 
             }
-            
-
-            
             
         }
 
@@ -52,7 +49,7 @@ namespace ERDiary
 
                 "\n6) Syöttääksesi uusi tehtävä"                        +
                 "\n7) Tulostaaksesi kaikki tehtävät"                    +
-                "\ntai paina ENTER lopettaaksesi.");
+                "\ntai paina ENTER lopettaaksesi.\n");
             
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.Write("Valitse toiminto:  ");
