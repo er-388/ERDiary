@@ -328,17 +328,6 @@ namespace ERDiary.Models
             }
         }
 
-        public static void Testi()
-        {
-            using (LearningDiaryContext testiYhteys = new LearningDiaryContext())
-            {
-                List<Topic> aiheet = testiYhteys.Topics.ToList();
-                foreach (var item in aiheet)
-                {
-                    Console.WriteLine(item.Title);
-                }
-            }
-        }
 
     }
 

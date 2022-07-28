@@ -11,7 +11,6 @@ namespace ERDiary
         static async Task Main(string[] args)
         {
 
-            Topic.Testi();
             Console.ForegroundColor = ConsoleColor.DarkGray;
 
             Console.WriteLine(@"  _   _   _ ___      ___  __  _ o  o ___    o  o    ___  _           

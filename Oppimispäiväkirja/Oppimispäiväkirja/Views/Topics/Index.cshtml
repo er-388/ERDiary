@@ -1,0 +1,170 @@
+﻿@model IEnumerable<Oppimispäiväkirja.Models.Topic>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <p>
+                <a class="link-small" asp-action="Create">Lisää uusi aihe</a>
+            </p>
+        </div>
+        <div class="col-4">
+        </div>
+        <div class="col-4">
+            <form asp-action="Index" class="form">
+                <label for="hakusana"></label>
+                <input type="text" placeholder="Hae aihetta" name="hakusana">
+                <button type="submit" class="search-button"> <!--oletustyyppi = submit (=> ei pakollinen)-->
+                    <img src="images/search.png">
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+<br />
+<br />
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Aiheen nimi</h1>
+        </div>
+        <div class="col">
+            <h1>Aiheen kuvaus</h1>
+        </div>
+
+        <div class="col">
+            <h1>Aiheen opiskelun aloituspäivä</h1>
+        </div>
+        <div class="col-1"
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    @foreach (var item in Model)
+    {
+
+        <div class="row topic-border-bottom">
+            <div class="col text-medium">
+                @Html.DisplayFor(modelItem => item.Title)
+
+            </div>
+            <div class="col ">
+                @Html.DisplayFor(modelItem => item.Description)
+            </div>
+
+            <div class="col">
+                @Html.DisplayFor(modelItem => item.StartLearningDate)
+
+            </div>
+            <div class="col-1">
+                <a class="link-small text-small" asp-action="Details" asp-route-id="@item.Id">Lisätiedot</a>
+                <a class="link-small text-small" asp-action="Delete" asp-route-id="@item.Id">Poista</a>
+                <a class="link-small text-small" asp-action="Edit" asp-route-id="@item.Id">Muokkaa</a>
+            </div>
+
+        </div>
+        
+    }
+
+</div>
+
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeToMaster)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeSpent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Source)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartLearningDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InProgress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompletionDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimeToMaster)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimeSpent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Source)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartLearningDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InProgress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompletionDate)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
