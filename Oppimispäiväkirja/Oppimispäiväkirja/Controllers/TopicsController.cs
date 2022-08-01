@@ -27,6 +27,13 @@ namespace Oppimispäiväkirja.Controllers
             {
                 topics = topics.Where(topic => topic.Title.Contains(hakusana)).ToList();
             }
+            //foreach (Topic topic in topics)
+            //{
+            //    if (String.IsNullOrEmpty(topic.Description) || String.IsNullOrWhiteSpace(topic.Description))
+            //    {
+            //        topic.Description = "puuttuva tieto";
+            //    }
+            //}
             
             return View(topics);
         }

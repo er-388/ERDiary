@@ -7,27 +7,51 @@
 <br />
 <div class="container">
     <div class="row">
-        <div class="col-4">
+        <div class="col-3">
             <p>
                 <a class="link-small" asp-action="Create">Lisää uusi aihe</a>
             </p>
         </div>
-        <div class="col-4">
-        </div>
-        <div class="col-4">
+
+        <div class="col-3">
             <form asp-action="Index" class="form">
                 <label for="hakusana"></label>
-                <input type="text" placeholder="Hae aihetta" name="hakusana">
-                <button type="submit" class="search-button"> <!--oletustyyppi = submit (=> ei pakollinen)-->
+                <input type="text" placeholder="Hae aihetta" name="hakusana" onFocus="kohdistus(this)" onblur="focusPois(this)">
+                <button type="submit" class="search-button">
+                    <!--oletustyyppi = submit (=> ei pakollinen)-->
                     <img src="images/search.png">
                 </button>
             </form>
+        </div>
+
+        <div class="col-3">
+            <button class="link-small text-small" id="nayta-kaikki-tiedot">Näytä/piilota lisätiedot</button>
+        </div>
+
+        <div class="col-1">
+        </div>
+
+        <div class="col-2">
+            <button class="nayta-info text-medium">Ohje</button>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-7">
+            <div class="piilotettu-sisalto text-small">
+                Vasemmasta yläkulmasta voit lisätä uuden aiheen. <br />
+                Hakukentästä voit hakea aiheita.<br />
+                Kunkin aiheen oikealta puolelta näet aiheen tarkat tiedot. Voit myös poistaa aiheen tai muokata sitä.
+            </div>
+        </div>
+        <div class="col-1">
 
         </div>
+
     </div>
 
 </div>
-
 
 <br />
 <br />
@@ -44,7 +68,8 @@
         <div class="col">
             <h1>Aiheen opiskelun aloituspäivä</h1>
         </div>
-        <div class="col-1"
+
+        <div class="col-1">
         </div>
     </div>
 </div>
@@ -54,117 +79,152 @@
     @foreach (var item in Model)
     {
 
-        <div class="row topic-border-bottom">
-            <div class="col text-medium">
+        <div class="row topic-border-top">
+            <div class="col text-medium col-iso">
                 @Html.DisplayFor(modelItem => item.Title)
-
             </div>
-            <div class="col ">
+
+            <div class="col col-iso attribuutti">
                 @Html.DisplayFor(modelItem => item.Description)
             </div>
 
-            <div class="col">
+            <div class="col col-iso">
+                @if (@Html.DisplayFor(modelItem => item.StartLearningDate).ToString() == "") {
+                <p>tyhjää!</p>
+                }
+                else {
                 @Html.DisplayFor(modelItem => item.StartLearningDate)
+                }
 
             </div>
-            <div class="col-1">
-                <a class="link-small text-small" asp-action="Details" asp-route-id="@item.Id">Lisätiedot</a>
+
+            <div class="col-1 col-iso">
+                @*<button class="link-small text-small nayta-kaikki-tiedot">Lisätiedot(uusi)</button>*@
+
+                @*<a class="link-small text-small" asp-action="Details" asp-route-id="@item.Id">Lisätiedot</a>*@
                 <a class="link-small text-small" asp-action="Delete" asp-route-id="@item.Id">Poista</a>
                 <a class="link-small text-small" asp-action="Edit" asp-route-id="@item.Id">Muokkaa</a>
             </div>
 
         </div>
-        
+
+        <table class="table table-striped table-hover table-responsive text-small kaikki-tiedot-kytkin">
+            <thead>
+                <tr>
+                    <th scope="col">Opiskelun vaatima aika</th>
+                    <th scope="col">Opiskeluun käytetty aika</th>
+                    <th scope="col">Lähde</th>
+                    <th scope="col">Kesken</th>
+                    <th scope="col">Opiskelu valmistunut</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.TimeToMaster)</td>
+                <td>@Html.DisplayFor(modelItem => item.TimeSpent)</td>
+                <td>@Html.DisplayFor(modelItem => item.Source)</td>
+                <td>@Html.DisplayFor(modelItem => item.InProgress)</td>
+                <td>@Html.DisplayFor(modelItem => item.CompletionDate)</td>
+            @*</tr>
+
+            <tr>
+                
+            </tr>
+
+            <tr>
+                
+            </tr>*@
+        </table>
+
     }
 
-</div>
+    </div>
 
 
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
 
 
 
 
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TimeToMaster)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TimeSpent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Source)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartLearningDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InProgress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CompletionDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-
-        @foreach (var item in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TimeToMaster)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TimeSpent)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Source)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartLearningDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.InProgress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CompletionDate)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimeToMaster)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimeSpent)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Source)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartLearningDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.InProgress)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CompletionDate)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TimeToMaster)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TimeSpent)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Source)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartLearningDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InProgress)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CompletionDate)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

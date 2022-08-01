@@ -84,7 +84,7 @@ h2 {
 }
 
 
-.col {
+.col-iso {
     border: 7px solid #fff;
     background-color: #EEF0F2;
     background-clip: border-box;
@@ -134,9 +134,10 @@ font-size: 0.7rem;
     object-fit: cover;
 }
 
-.topic-border-bottom {
+.topic-border-top {
     box-sizing: border-box;
-    border-bottom: dashed 1px #C6C7C4;
+    /*border-bottom: dashed 1px #C6C7C4;*/
+    border-top: dashed 1px #C6C7C4;
 }
 
 
@@ -151,4 +152,24 @@ font-size: 0.7rem;
     color: #003049;
     font-size: .9rem;
     text-decoration-line: none;
-} 
+}
+
+
+
+.piilotettu-sisalto {
+    
+    border: .1rem dashed #846A6A;
+    margin: 5px;
+    background: #EEF0F2;
+}
+
+
+/*.nayta-info {
+    display: block;   
+}
+*/
+/*
+.kaikki-tiedot-kytkin {
+    display: none;
+}
+*/

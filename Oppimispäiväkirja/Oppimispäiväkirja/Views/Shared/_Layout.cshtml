@@ -4,9 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Oppimispäiväkirja</title>
+    <link rel="icon" type="image/x-icon" href="C:\Users\Erkki\source\repos\ERDiary\Oppimispäiväkirja\Oppimispäiväkirja\wwwroot">
+    <!--../../wwwroot/favicon1.svg-->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/style.css" />
+    <script src="~/js/script.js" asp-append-version="true" defer></script>
 </head>
 <body>
     <header>
@@ -31,7 +34,7 @@
         </nav>*@
         
         <nav>
-            <h1 class="dis-inline">Oppimispäiväkirja</h1>
+            <h1 class="dis-inline" id="otsikko">Oppimispäiväkirja</h1>
             <ul class="navlist dis-inline">
                 <li class="nav-items dis-inline">
                     <a class="nav-items dis-inline" asp-area="" asp-controller="Topics" asp-action="Index">ETUSIVU</a>
@@ -39,7 +42,8 @@
                 <li class="nav-items dis-inline">
                     <a class="nav-items dis-inline" asp-area="" asp-controller="Topics" asp-action="Create">LISÄÄ UUSI AIHE</a>
                 </li>
-            </ul>
+                <li class="nav-items dis-inline"><button type="button" onClick="infoNappula()">INFO</button></li>
+</ul>
 
         </nav>
 
