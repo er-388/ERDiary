@@ -3,63 +3,68 @@
 @{
     ViewData["Title"] = "Create";
 }
+<br /><br />
+<h1>Lisää uusi aihe täyttämällä lomake</h1>
 
-<h1>Create</h1>
-
-<h4>Topic</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" autofocus onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="Title" class="control-label text-bolded">Aiheen nimi</label>
+                <input asp-for="Title" class="form-control" autofocus onFocus="kohdistus(this)" onblur="focusPois(this)" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control testi" onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="Description" class="control-label text-bolded">Kuvaus</label>
+                <input asp-for="Description" class="form-control testi" onFocus="kohdistus(this)" onblur="focusPois(this)" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TimeToMaster" class="control-label"></label>
-                <input asp-for="TimeToMaster" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="TimeToMaster" class="control-label text-bolded">Aiheen oppimiseen vaadittu aika (h)</label>
+                <input asp-for="TimeToMaster" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)" />
                 <span asp-validation-for="TimeToMaster" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TimeSpent" class="control-label"></label>
-                <input asp-for="TimeSpent" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="TimeSpent" class="control-label text-bolded">Aiheen opiskeluun käytetty aika (h)</label>
+                <input asp-for="TimeSpent" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)" />
                 <span asp-validation-for="TimeSpent" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Source" class="control-label"></label>
-                <input asp-for="Source" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="Source" class="control-label text-bolded">Lähde</label>
+                <input asp-for="Source" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)" />
                 <span asp-validation-for="Source" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StartLearningDate" class="control-label"></label>
-                <input asp-for="StartLearningDate" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="StartLearningDate" class="control-label text-bolded">Aiheen opiskelun aloitusajankohta</label>
+                <input asp-for="StartLearningDate" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)" />
                 <span asp-validation-for="StartLearningDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="InProgress" class="control-label"></label>
-                <input asp-for="InProgress" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="InProgress" class="control-label text-bolded">Onko aiheen opiskelu kesken?</label>
+                <p>
+                    Kyllä @Html.RadioButtonFor(topic => topic.InProgress, true)&nbsp;&nbsp;&nbsp;&nbsp;
+                    Ei @Html.RadioButtonFor(topic => topic.InProgress, false)
+                </p>
                 <span asp-validation-for="InProgress" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="CompletionDate" class="control-label"></label>
-                <input asp-for="CompletionDate" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)"/>
+                <label asp-for="CompletionDate" class="control-label text-bolded">Aiheen opiskelun valmistumisaika</label>
+                <input asp-for="CompletionDate" class="form-control" onFocus="kohdistus(this)" onblur="focusPois(this)" />
                 <span asp-validation-for="CompletionDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Luo aihe" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="link-small">Palaa aihelistaukseen</a>
 </div>
 

@@ -76,7 +76,7 @@ namespace ERDiary
                 string title = Console.ReadLine();
                 if (!String.IsNullOrWhiteSpace(title))
                 {
-                    Topic t = new Topic(title);
+                    Task<Topic> t = new Topic(title);
                 }
                 else
                 {

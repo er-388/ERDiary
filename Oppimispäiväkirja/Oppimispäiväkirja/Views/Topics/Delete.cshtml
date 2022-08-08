@@ -4,66 +4,80 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
+<br />
+<br />
+<h1>Voit poistaa alla olevan aiheen Poista-painikkeella</h1>
+<hr />
 <div>
     <h4>Topic</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
+        <dt class="col-sm-3">
+            Aihe
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
+        <dt class="col-sm-3">
+            Kuvaus
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TimeToMaster)
+        <dt class="col-sm-3">
+            Aiheen oppimiseen vaadittu aika (h)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.TimeToMaster)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TimeSpent)
+        <dt class="col-sm-3">
+            Aiheen opiskeluun käytetty aika (h)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.TimeSpent)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Source)
+        <dt class="col-sm-3">
+            Lähde
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Source)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartLearningDate)
+        <dt class="col-sm-3">
+            Aiheen opiskelun valmistumisaika
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.StartLearningDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InProgress)
+        <dt class="col-sm-3">
+            Onko aiheen opiskelu kesken?
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InProgress)
+        <dd class="col-sm-9">
+            
+            @{ if (Model.InProgress == true)
+                {
+                    <p>Kyllä</p>
+                }
+                else if (Model.InProgress == null)
+                {
+                    <p></p>
+                }
+                else if (!Model.InProgress == true)
+                {
+                    <p>Ei</p>
+                }
+            }
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CompletionDate)
+        <dt class="col-sm-3">
+            Aiheen opiskelun valmistumisaika
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.CompletionDate)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" onClick="varmistaPoisto()" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Poista" onClick="varmistaPoisto()" class="btn btn-danger" /> |
+        <a asp-action="Index" class="link-small">Takaisin aihelistaukseen</a>
     </form>
 </div>

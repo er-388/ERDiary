@@ -3,7 +3,6 @@
 function kohdistus(input) {
     input.addEventListener("focusin", () => {
         input.style.background = "#A2999E";
-        //console.log('tässä!')
     });
 }
 
@@ -11,7 +10,6 @@ function kohdistus(input) {
 function focusPois(input) {
     input.addEventListener('focusout', () => {
         input.style.background = '';
-        //console.log('poisto!')
     });
 }
 
@@ -51,30 +49,40 @@ function paljastaSisalto() {
 
 //Näytä kaikki tiedot -laatikko näkyviin
 
-const naytaLisatiedotNappi = document.querySelector("#nayta-kaikki-tiedot");
-//const lisatietorivit = document.querySelectorAll(".kaikki-tiedot-kytkin");
-const lisatietorivit = document.getElementsByClassName("kaikki-tiedot-kytkin");
-naytaLisatiedotNappi.addEventListener("click", naytaKaikkiTiedot);
+const naytaLisatiedot = document.querySelector("#nayta-kaikki-tiedot");
+//console.log(naytaLisatiedot);
+const lisatietorivit = document.querySelectorAll(".lisatietotaulukko");
+naytaLisatiedot.addEventListener("click", naytaKaikkiTiedot);
+
 
 function naytaKaikkiTiedot() {
     for (const div of lisatietorivit) {
-        if (div.style.display === "none") {
-            div.style.display = "block";
+        if (div.classList.contains("piilota-sisalto")) {
+            div.classList.remove("piilota-sisalto")
         } else {
-            div.style.display = "none";
+            div.classList.add("piilota-sisalto");
         }
-        //div.style.display = 'none';
+
     }
-        
 }
 
-//Tulostusten muuttaminen DOM:illa
 
-const testiin = document.querySelectorAll('.attribuutti');
+//Puuttuvien tietojen tulostusten muuttaminen DOM:illa
 
-for (const div of testiin) {
+const attribuutit = document.querySelectorAll('.attribuutti');
+
+for (const div of attribuutit) {
     if (div.innerText == '') {
+        div.classList.add("tieto-puuttuu", "text-small", "cursive");
         div.innerText = 'tieto puuttuu...';
     }
 }
 
+const pienetAttribuutit = document.querySelectorAll('.lisatieto-attribuutti');
+
+for (const div of pienetAttribuutit) {
+    if (div.innerText == '') {
+        div.classList.add("tieto-puuttuu", "text-small", "cursive");
+        div.innerText = '---';
+    }
+}

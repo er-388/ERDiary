@@ -99,7 +99,7 @@ namespace ERDiary.Models
                                     
                 if (Int32.TryParse(Console.ReadLine(), out int propertyToSet) == true)
                 {
-                    Topic.SetPropertyAsync(idOfChosenTopic, propertyToSet);
+                    await Topic.SetPropertyAsync(idOfChosenTopic, propertyToSet);
                 }
                 else
                 {
@@ -232,7 +232,7 @@ namespace ERDiary.Models
                     break;
 
                 case 7://Poistaa aiheen
-                    DeleteTopic(idOfChosenTopic);
+                    await DeleteTopic(idOfChosenTopic);
                     break;
 
                 default:
@@ -243,13 +243,13 @@ namespace ERDiary.Models
 
 
         //poistaa käyttäjän valitseman topicin
-        public static void DeleteTopic(int idOfChosenTopic)
+        public static async Task DeleteTopic(int idOfChosenTopic)
         {
             using (LearningDiaryContext tietokantaYhteys = new LearningDiaryContext())
             {
                 var result = tietokantaYhteys.Topics.FirstOrDefault(topic => topic.Id == idOfChosenTopic);
                 tietokantaYhteys.Topics.Remove(result);
-                tietokantaYhteys.SaveChanges();
+                await tietokantaYhteys.SaveChangesAsync();
             }
         }
 
@@ -304,10 +304,11 @@ namespace ERDiary.Models
                 {
                     try
                     {
-                        await Task.Run(() => result.Add(tietokantaYhteys.Topics
+                        result = await tietokantaYhteys.Topics
                             .Where(topic => topic.Id == searchId)
                             .Select(topic => topic.Title)
-                            .First()));
+                            .ToListAsync();
+
                     }
                     catch
                     {
@@ -318,11 +319,10 @@ namespace ERDiary.Models
 
                 else
                 {
-                    result = await Task.Run(() => 
-                    tietokantaYhteys.Topics
+                    result = await tietokantaYhteys.Topics
                         .Where(topic => topic.Title.ToLower()
                         .Contains(searchObject.ToLower()))
-                        .Select(topic => topic.Title).ToList());
+                        .Select(topic => topic.Title).ToListAsync();
                 }
                 return result;
             }
