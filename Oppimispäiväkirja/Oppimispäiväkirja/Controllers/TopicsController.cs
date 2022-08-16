@@ -25,10 +25,7 @@ namespace Oppimispäiväkirja.Controllers
             var topics = await _context.Topic.ToListAsync();
             if (!String.IsNullOrEmpty(hakusana))
             {
-                //topics = topics.Where(topic => topic.Title.Contains(hakusana)).ToList();
-                topics = topics.Where(topic => topic.Title.Contains(hakusana))
-                    .Select(topic => new { Title: Topic.Title })
-                    .ToList();
+                topics = topics.Where(topic => topic.Title.Contains(hakusana)).ToList();
             }
 
             return View(topics);

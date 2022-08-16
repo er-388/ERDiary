@@ -1,4 +1,4 @@
-﻿//const { each } = require("jquery");
+﻿
 
 function kohdistus(input) {
     input.addEventListener("focusin", () => {
@@ -58,7 +58,7 @@ naytaLisatiedot.addEventListener("click", naytaKaikkiTiedot);
 function naytaKaikkiTiedot() {
     for (const div of lisatietorivit) {
         if (div.classList.contains("piilota-sisalto")) {
-            div.classList.remove("piilota-sisalto")
+            div.classList.remove("piilota-sisalto");
         } else {
             div.classList.add("piilota-sisalto");
         }
